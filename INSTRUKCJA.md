@@ -5,7 +5,7 @@ Aparat w Safari działa tylko na stronie https, dlatego pliki trzeba gdzieś opu
 
 1. Załóż darmowe konto na github.com.
 2. Kliknij **New repository**, nazwij je `cenownik`, ustaw **Public**, utwórz.
-3. Kliknij **uploading an existing file** i przeciągnij WSZYSTKIE pliki z tego folderu (index.html, sw.js, manifest.json, icon-*.png, pdf.min.mjs, pdf.worker.min.mjs, LICENSE-pdfjs.txt). Zatwierdź przyciskiem **Commit changes**.
+3. Kliknij **uploading an existing file** i przeciągnij WSZYSTKIE pliki z tego folderu (index.html, sw.js, manifest.json, icon-*.png, pdf.min.mjs, pdf.worker.min.mjs, pdf-worker.mjs, rs-polyfill.mjs, LICENSE-pdfjs.txt). Zatwierdź przyciskiem **Commit changes**.
 4. Wejdź w **Settings → Pages**, w „Branch” wybierz `main` i `/ (root)`, kliknij **Save**.
 5. Po 1–2 minutach aplikacja będzie pod adresem `https://TWÓJ-LOGIN.github.io/cenownik/`.
 

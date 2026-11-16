@@ -914,8 +914,9 @@ async function decide(p, price, action) {
 let pdfjsLib = null;
 async function pdfToLines(buf) {
   if (!pdfjsLib) {
+    await import("./rs-polyfill.mjs");
     pdfjsLib = await import("./pdf.min.mjs");
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "./pdf.worker.min.mjs";
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "./pdf-worker.mjs";
   }
   const doc = await pdfjsLib.getDocument({ data: new Uint8Array(buf), isEvalSupported: false }).promise;
   const out = [];
