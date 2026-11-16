@@ -190,7 +190,7 @@ pre.msg{white-space:pre-wrap;font:inherit;margin:8px 0}
         <span class="btn filebtn">📂 Przywróć<input type="file" id="bk-import" accept=".json,application/json"></span>
       </div>
       <div class="btns"><button class="btn" id="demo">Przykładowa faktura</button><button class="btn danger" id="wipe">Wyczyść dane</button></div>
-      <div class="small">Odczyt PDF: pdf.js (Mozilla, licencja Apache 2.0).</div>
+      <div class="small"><b id="app-ver"></b> · Odczyt PDF: pdf.js (Mozilla, licencja Apache 2.0).</div>
     </div>
   </section>
 </main>
@@ -722,12 +722,13 @@ const Core = (() => {
       if (n > 0 && L.page !== lines[n - 1].page) cls.push({ type: "other", line: L, pageBreak: true });
       if (isHeader(t)) {
         inTable = true;
-        const hn = L.items.find(i => /^nazwa/i.test(i.s.trim())), hq = L.items.find(i => /^ilo/i.test(i.s.trim()));
-        if (hn && hq && hq.x > hn.x) { nameX = hn.x - 40; qtyX = hq.x; } else { nameX = -Infinity; qtyX = Infinity; }
+        // nagłówki bywają wyśrodkowane – kolumna nazw zaczyna się zaraz za kolumną L.P.
+        const hq = L.items.find(i => /^ilo/i.test(i.s.trim()));
+        nameX = -Infinity; qtyX = hq ? hq.x : Infinity;
         cls.push({ type: "header", line: L }); continue;
       }
       if (!inTable) { cls.push({ type: "other", line: L }); continue; }
-      if (/^(razem|suma|ogółem|ogolem|podsumowanie|do zapłaty|do zaplaty|w tym|wartość ogółem|stawka vat)/i.test(t)) { inTable = false; cls.push({ type: "other", line: L }); continue; }
+      if (/^(razem|suma|ogółem|ogolem|podsumowanie|do zapłaty|do zaplaty|w tym|wartość|wartosc|stawka vat|opakowania|kaucj)/i.test(t) || /\bzł\b/.test(t)) { inTable = false; cls.push({ type: "other", line: L }); continue; }
       const words = lineWords(L.items);
       const r = parseRowWords(words);
       if (r) { cls.push({ type: "row", row: r, line: L, frags: [] }); continue; }
@@ -754,7 +755,8 @@ const Core = (() => {
       const gaps = []; for (let k = 1; k < nl.length; k++) gaps.push(nl[k - 1].y - nl[k].y);
       const sg2 = gaps.slice().sort((p, q) => p - q);
       let thr = Infinity, bestRatio = 1;
-      for (let k = 0; k + 1 < sg2.length; k++) { if (sg2[k] <= 0.5) continue; const r = sg2[k + 1] / sg2[k]; if (r > bestRatio) { bestRatio = r; thr = (sg2[k] + sg2[k + 1]) / 2; } }
+      // pierwszy wyraźny skok od najmniejszych odstępów (interlinia w komórce) w górę
+      for (let k = 0; k + 1 < sg2.length; k++) { if (sg2[k] <= 0.5) continue; const r = sg2[k + 1] / sg2[k]; if (r > 1.08) { bestRatio = r; thr = (sg2[k] + sg2[k + 1]) / 2; break; } }
       if (bestRatio < 1.12) thr = (sg2[0] || 0) <= hMed * 1.45 && sg2.length && sg2[sg2.length - 1] <= hMed * 1.45 ? Infinity : 0.1; // jednolite odstępy
       if (thr === Infinity && rowsS.length > 1) thr = 0.1;
       const blocks = []; let cur = null;
@@ -790,8 +792,8 @@ const Core = (() => {
     }
     const all = texts.join("\n");
     let number = "";
-    const mN = all.match(/faktura(?:\s+vat)?(?:\s+(?:nr|numer))?\.?\s*[:\-]?\s*([A-Z0-9][A-Z0-9\/\-_.]*\d[A-Z0-9\/\-_.]*)/i) || all.match(/(?:nr|numer)\s+faktury\s*[:\-]?\s*([A-Z0-9][A-Z0-9\/\-_.]*)/i);
-    if (mN) number = mN[1].replace(/[.,]$/, "");
+    const mN = all.match(/dokument\s+(?:nr|numer)\.?\s*[:\-]?\s*([A-Z0-9][A-Z0-9 \/\-_.]*\d)/i) || all.match(/faktura(?:\s+vat)?(?:\s+(?:nr|numer))?\.?\s*[:\-]?\s*([A-Z0-9][A-Z0-9\/\-_.]*\d[A-Z0-9\/\-_.]*)/i) || all.match(/(?:nr|numer)\s+faktury\s*[:\-]?\s*([A-Z0-9][A-Z0-9\/\-_.]*)/i);
+    if (mN) number = mN[1].replace(/\s+/g, "").replace(/[.,]$/, "");
     let date = "";
     const mD = all.match(/data\s+wystawienia\s*[:\-]?\s*(\d{1,4}[.\-\/]\d{1,2}[.\-\/]\d{1,4})/i) || all.match(/(\d{4}-\d{2}-\d{2}|\d{2}[.\-]\d{2}[.\-]\d{4})/);
     if (mD) {
@@ -812,6 +814,7 @@ const Core = (() => {
 })();
 
 
+const APP_VERSION = "3";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -922,8 +925,13 @@ async function pdfToLines(buf) {
   const out = [];
   for (let p = 1; p <= doc.numPages; p++) {
     const page = await doc.getPage(p);
-    const tc = await page.getTextContent();
-    const items = tc.items.filter(i => typeof i.str === "string").map(i => ({ s: i.str, x: i.transform[4], y: i.transform[5], h: Math.abs(i.transform[3]) || i.height || 8 }));
+    // czytamy strumień ręcznie (Safari nie umie „for await” po ReadableStream)
+    let raw = [];
+    if (typeof page.streamTextContent === "function") {
+      const reader = page.streamTextContent().getReader();
+      for (;;) { const { value, done } = await reader.read(); if (done) break; if (value && value.items) raw.push(...value.items); }
+    } else raw = (await page.getTextContent()).items;
+    const items = raw.filter(i => typeof i.str === "string").map(i => ({ s: i.str, x: i.transform[4], y: i.transform[5], h: Math.abs(i.transform[3]) || i.height || 8 }));
     for (const l of Core.groupLines(items)) { l.page = p; out.push(l); }
   }
   return out;
@@ -952,7 +960,7 @@ async function importFiles(files) {
       const r = await applyInvoice(inv, f.name);
       added++; lines += r;
     } catch (e) {
-      skipped.push(f.name + ": " + e.message);
+      skipped.push(f.name + ": " + (e && e.message ? e.message : String(e)) + " [wersja " + APP_VERSION + "]");
     }
   }
   renderAll();
@@ -1519,6 +1527,7 @@ async function init() {
 
   applyTheme();
   fillCatFilter();
+  $("#app-ver").textContent = "Wersja aplikacji: " + APP_VERSION;
   renderAll();
   show("scan");
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
