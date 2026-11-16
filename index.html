@@ -21,9 +21,9 @@ try{const t=JSON.parse(localStorage.getItem("cenownik-theme")||"{}");const r=doc
  --pri:var(--pri-l);--pri-ink:#fff;--pri-soft:color-mix(in srgb,var(--pri) 12%,transparent);
  --up:#d92d20;--up-bg:#fee4e2;--down:#079455;--down-bg:#dcfae6;--new:#b54708;--new-bg:#fef0c7;--ok:#079455;--ok-bg:#dcfae6;--same:#475467;--same-bg:#eaecf0;
  --r:16px;--pad:14px;--fs:16px}
-@media (prefers-color-scheme:dark){:root[data-theme=auto]{--bg:#0b0e13;--card:#151a22;--card2:#1b212b;--ink:#eef0f3;--mut:#98a2b3;--line:#262d38;--shadow:none;--pri:var(--pri-d);--pri-ink:#0b0e13;
+@media (prefers-color-scheme:dark){:root[data-theme=auto]{--tagk:55%;--tagbg:24%;--bg:#0b0e13;--card:#151a22;--card2:#1b212b;--ink:#eef0f3;--mut:#98a2b3;--line:#262d38;--shadow:none;--pri:var(--pri-d);--pri-ink:#0b0e13;
  --up:#f97066;--up-bg:#3a1512;--down:#47cd89;--down-bg:#0d2b1c;--new:#fdb022;--new-bg:#3a2a07;--ok:#47cd89;--ok-bg:#0d2b1c;--same:#cbd2dc;--same-bg:#262d38}}
-:root[data-theme=dark]{--bg:#0b0e13;--card:#151a22;--card2:#1b212b;--ink:#eef0f3;--mut:#98a2b3;--line:#262d38;--shadow:none;--pri:var(--pri-d);--pri-ink:#0b0e13;
+:root[data-theme=dark]{--tagk:55%;--tagbg:24%;--bg:#0b0e13;--card:#151a22;--card2:#1b212b;--ink:#eef0f3;--mut:#98a2b3;--line:#262d38;--shadow:none;--pri:var(--pri-d);--pri-ink:#0b0e13;
  --up:#f97066;--up-bg:#3a1512;--down:#47cd89;--down-bg:#0d2b1c;--new:#fdb022;--new-bg:#3a2a07;--ok:#47cd89;--ok-bg:#0d2b1c;--same:#cbd2dc;--same-bg:#262d38}
 :root[data-density=compact]{--pad:10px;--fs:15px}
 :root[data-density=large]{--pad:17px;--fs:18px}
@@ -67,10 +67,16 @@ label{display:block;font-size:13px;color:var(--mut);font-weight:600}label input,
 .row-sub,.small{font-size:13px;color:var(--mut)}
 .row-side{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
 .price{font-weight:800;font-size:19px;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
-.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:6px;background:var(--pri-soft);color:var(--pri);margin-right:4px}
+.tag{--cc:var(--pri);display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:2px 8px 2px 7px;border-radius:7px;background:color-mix(in srgb,var(--cc) var(--tagbg,14%),transparent);color:color-mix(in srgb,var(--cc) var(--tagk,78%),var(--ink));margin-right:5px}
+.tag:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cc)}
+.cat-color{width:38px;height:38px;padding:2px;border-radius:10px;flex:0 0 38px;background:var(--card)}
+.cat-color::-webkit-color-swatch-wrapper{padding:0}.cat-color::-webkit-color-swatch{border:0;border-radius:7px}
+.sticky-search{position:sticky;top:-4px;z-index:2;background:var(--bg);padding:6px 0;margin-top:6px}
+.search .clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:var(--line);color:var(--mut);width:24px;height:24px;border-radius:50%;font-size:12px}
+input[type=search]::-webkit-search-cancel-button{display:none}
 .chip{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--same-bg);color:var(--same);white-space:nowrap}
 .chip.up{background:var(--up-bg);color:var(--up)}.chip.down{background:var(--down-bg);color:var(--down)}.chip.new{background:var(--new-bg);color:var(--new)}.chip.ok{background:var(--ok-bg);color:var(--ok)}
-.cat-select{display:block;width:100%;max-width:230px;padding:6px 8px;font-size:14px;border-radius:9px;margin:6px 0 4px}
+.cat-select{--cc:var(--pri);display:block;width:100%;max-width:230px;padding:6px 8px 6px 10px;font-size:14px;font-weight:600;border-radius:9px;margin:6px 0 4px;border-left:5px solid var(--cc);background:color-mix(in srgb,var(--cc) 8%,var(--card))}
 .empty{text-align:center;color:var(--mut);padding:34px 10px}.empty-ic{font-size:34px;margin-bottom:6px}
 .inv{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:8px 0;cursor:pointer;box-shadow:var(--shadow)}
 .inv-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
@@ -104,7 +110,9 @@ label{display:block;font-size:13px;color:var(--mut);font-weight:600}label input,
 .title-input{font-family:inherit;font-size:21px;font-weight:800;line-height:1.25;width:100%;resize:none;color:var(--ink);border:0;background:transparent;padding:4px 40px 4px 0;outline:none;letter-spacing:-.3px;box-shadow:none!important}
 .cats{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
 .cat{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:7px 12px;font-size:14px;font-weight:600}
-.cat.sel{background:var(--pri);color:var(--pri-ink);border-color:var(--pri)}
+.cat{--cc:var(--pri);display:inline-flex;align-items:center;gap:6px}
+.cat:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--cc)}
+.cat.sel{background:var(--cc);color:#fff;border-color:var(--cc)}.cat.sel:before{background:#fff}
 .cat small{opacity:.7;font-weight:500}
 .box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0}
 .kv{display:flex;justify-content:space-between;gap:10px;padding:3px 0}.kv.small{font-size:13px;color:var(--mut)}
@@ -443,11 +451,11 @@ const EAN = (() => {
 const Core = (() => {
   const DEFAULT_SETTINGS = {
     categories: [
-      { id: "spozywka", name: "Spożywka", margin: 34 },
-      { id: "alkohol", name: "Alkohol", margin: 25 },
-      { id: "warzywa", name: "Warzywa i owoce", margin: 40 },
-      { id: "chemia", name: "Chemia i inne", margin: 30 },
-      { id: "papierosy", name: "Papierosy (cena stała)", margin: 0 }
+      { id: "spozywka", name: "Spożywka", margin: 34, color: "#d97706" },
+      { id: "alkohol", name: "Alkohol", margin: 25, color: "#9f1239" },
+      { id: "warzywa", name: "Warzywa i owoce", margin: 40, color: "#16a34a" },
+      { id: "chemia", name: "Chemia i inne", margin: 30, color: "#2563eb" },
+      { id: "papierosy", name: "Papierosy (cena stała)", margin: 0, color: "#78716c" }
     ],
     defaultCategory: "spozywka",
     marginMode: "narzut",       // "narzut" = cena zakupu brutto + X%, "marza" = X% ceny sprzedaży
@@ -808,13 +816,61 @@ const Core = (() => {
     return { number, date, seller, kind: /korekt/i.test(all.slice(0, 600)) ? "KOR" : "VAT", items, format: "PDF" };
   }
 
+
+  // ---------- inteligentne wyszukiwanie ----------
+  const PL = { "ą": "a", "ć": "c", "ę": "e", "ł": "l", "ń": "n", "ó": "o", "ś": "s", "ź": "z", "ż": "z" };
+  function norm(s) {
+    return String(s || "").toLowerCase().replace(/[ąćęłńóśźż]/g, ch => PL[ch]).replace(/(\d),(\d)/g, "$1.$2").replace(/[^a-z0-9.%]+/g, " ").trim();
+  }
+  function lev(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i]; let rowMin = i;
+      for (let j = 1; j <= b.length; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        if (cur[j] < rowMin) rowMin = cur[j];
+      }
+      if (rowMin > max) return max + 1;
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+  // zwraca wynik (>0 pasuje) – każde słowo zapytania musi gdzieś pasować
+  function searchScore(query, text, extra) {
+    const qs = norm(query).split(" ").filter(Boolean);
+    if (!qs.length) return 1;
+    const t = norm(text), words = t.split(" ");
+    const digits = String(extra || "");
+    let score = 0;
+    for (const q of qs) {
+      let best = 0;
+      if (/^\d{4,}$/.test(q) && digits.includes(q)) best = 3;
+      for (const w of words) {
+        let s = 0;
+        if (w === q) s = 4;
+        else if (w.startsWith(q)) s = 3;
+        else if (q.length >= 3 && w.includes(q)) s = 1.5;
+        else if (q.length >= 4 && !/\d/.test(q)) {
+          const max = q.length >= 7 ? 2 : 1;
+          if (lev(q, w.slice(0, q.length), max) <= max || lev(q, w, max) <= max) s = 1;
+        }
+        if (s > best) best = s;
+      }
+      if (!best && q.length >= 3 && t.replace(/ /g, "").includes(q)) best = 1; // np. "cocacola"
+      if (!best) return 0;
+      score += best;
+    }
+    return score;
+  }
+
   function fmt(x) { return x === null || x === undefined || !isFinite(x) ? "—" : x.toFixed(2).replace(".", ","); }
 
-  return { DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, parseKsefXml, parseCsv, fmt };
+  return { norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, parseKsefXml, parseCsv, fmt };
 })();
 
 
-const APP_VERSION = "3";
+const APP_VERSION = "4";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -898,6 +954,14 @@ function findByCode(code) {
   return null;
 }
 function needsDecision(p) { return !!(p.lastCost && p.lastCost.invoiceId && p.decidedFor !== p.lastCost.invoiceId); }
+const CAT_PALETTE = ["#d97706", "#9f1239", "#16a34a", "#2563eb", "#78716c", "#7c3aed", "#0d9488", "#db2777", "#0891b2", "#65a30d", "#ea580c", "#4f46e5"];
+const CAT_DEFAULT = { spozywka: "#d97706", alkohol: "#9f1239", warzywa: "#16a34a", chemia: "#2563eb", papierosy: "#78716c" };
+function catColor(id) {
+  const cs = S.settings.categories, i = cs.findIndex(c => c.id === id);
+  if (i < 0) return "#98a2b3";
+  return cs[i].color || CAT_DEFAULT[id] || CAT_PALETTE[i % CAT_PALETTE.length];
+}
+function catTag(id) { return `<span class="tag" style="--cc:${catColor(id)}">${esc(catName(id))}</span>`; }
 function catName(id) { const c = S.settings.categories.find(c => c.id === id); return c ? c.name : "—"; }
 function prevCost(p) {
   const h = (p.costHistory || []);
@@ -1043,10 +1107,10 @@ function statusOf(p) {
 
 function priceRow(p, opts = {}) {
   const st = statusOf(p), sp = st.sp;
-  const catSel = opts.catEdit ? `<select class="cat-select" data-catfor="${p.id}">${S.settings.categories.map(c => `<option value="${c.id}" ${c.id === p.category ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>` : "";
+  const catSel = opts.catEdit ? `<select class="cat-select" style="--cc:${catColor(p.category)}" data-catfor="${p.id}">${S.settings.categories.map(c => `<option value="${c.id}" ${c.id === p.category ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>` : "";
   return `<div class="row st-${st.cls}" data-pid="${p.id}">
     <div class="row-main"><div class="row-title">${esc(p.name)}</div>
-    <div class="row-sub">${catSel || `<span class="tag">${esc(catName(p.category))}</span>`} zakup ${F(Core.unitCost(p))} zł${p.packQty > 1 ? " (÷" + p.packQty + ")" : ""}</div></div>
+    <div class="row-sub">${catSel || catTag(p.category)} zakup ${F(Core.unitCost(p))} zł${p.packQty > 1 ? " (÷" + p.packQty + ")" : ""}</div></div>
     <div class="row-side"><div class="price">${sp ? F(sp.price) : "—"}</div>
     <div class="row-sub">${p.shelfPrice != null ? "półka " + F(p.shelfPrice) : "brak ceny"}</div>
     <span class="chip ${st.cls}">${st.label}</span></div></div>`;
@@ -1101,22 +1165,46 @@ function renderInvoices() {
 function openInvoice(id) {
   const inv = S.invoices.find(i => i.id === id);
   if (!inv) return;
-  let mode = "open";
+  let mode = "open", query = "";
+  const products = () => [...new Map(inv.lines.map(l => [l.productId, S.products.get(l.productId)])).values()].filter(Boolean);
+  const isOpen = p => needsDecision(p) && p.lastCost.invoiceId === inv.id;
+  const drawRows = () => {
+    const ps = products();
+    let list = mode === "open" ? ps.filter(isOpen) : ps;
+    const q = query.trim();
+    if (q) {
+      // szukamy w całej fakturze; pozycje do decyzji wyżej
+      list = ps.map(p => ({ p, sc: Core.searchScore(q, p.name + " " + (p.invoiceName || ""), (p.eans || []).join(" ")) }))
+        .filter(x => x.sc > 0).sort((x, y) => (isOpen(y.p) - isOpen(x.p)) || (y.sc - x.sc)).map(x => x.p);
+    }
+    $("#inv-count").textContent = q ? `Znaleziono: ${list.length}` : "";
+    $("#inv-rows").innerHTML = list.length ? list.map(p => priceRow(p, { catEdit: mode === "cat" })).join("")
+      : q ? `<div class="empty"><div class="empty-ic">🔎</div>Nic nie pasuje do „${esc(q)}”</div>` : `<div class="empty"><div class="empty-ic">🎉</div>Wszystkie pozycje mają decyzję</div>`;
+    bindRows($("#inv-rows"), draw);
+  };
   const draw = () => {
-    const ps = [...new Map(inv.lines.map(l => [l.productId, S.products.get(l.productId)])).values()].filter(Boolean);
-    const list = mode === "open" ? ps.filter(p => needsDecision(p) && p.lastCost.invoiceId === inv.id) : ps;
-    const same = ps.filter(p => needsDecision(p) && p.lastCost.invoiceId === inv.id && p.shelfPrice != null && Core.suggestedPrice(p, S.settings)?.price === p.shelfPrice);
+    const ps = products();
+    const same = ps.filter(p => isOpen(p) && p.shelfPrice != null && Core.suggestedPrice(p, S.settings)?.price === p.shelfPrice);
     const pr = invProgress(inv);
     modal(`<h2>${esc(inv.number)}</h2><div class="row-sub">${esc(inv.date)} · ${esc(inv.seller || "")} · ${pr.done}/${pr.total} gotowe</div>
+      <div class="bar"><i style="width:${pr.total ? Math.round(pr.done / pr.total * 100) : 100}%"></i></div>
+      <div class="search sticky-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="inv-q" type="search" placeholder="Szukaj w fakturze, np. „zubr”, „jogurt 150”" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" value="${esc(query)}">
+        <button class="clear" id="inv-q-clear" aria-label="Wyczyść" style="${query ? "" : "display:none"}">✕</button></div>
       <div class="seg">
         <button data-mode="open" class="${mode === "open" ? "on" : ""}">Do decyzji (${pr.open})</button>
-        <button data-mode="all" class="${mode === "all" ? "on" : ""}">Wszystkie</button>
+        <button data-mode="all" class="${mode === "all" ? "on" : ""}">Wszystkie (${pr.total})</button>
         <button data-mode="cat" class="${mode === "cat" ? "on" : ""}">Kategorie</button>
       </div>
       ${mode === "cat" ? `<div class="hint">Sprawdź kategorie po imporcie. Zmiana jest zapamiętywana – następnym razem podobne nazwy dostaną ją same.</div>` : ""}
       ${same.length && mode !== "cat" ? `<button class="btn wide" id="bulk-keep">✓ Zatwierdź ${same.length} poz., gdzie cena się nie zmienia</button>` : ""}
-      <div id="inv-rows">${list.length ? list.map(p => priceRow(p, { catEdit: mode === "cat" })).join("") : `<div class="empty"><div class="empty-ic">🎉</div>Wszystkie pozycje mają decyzję</div>`}</div>
+      <div class="small" id="inv-count"></div>
+      <div id="inv-rows"></div>
       <div class="btns"><button class="btn" id="inv-csv">Eksport CSV</button><button class="btn danger" id="inv-del">Usuń fakturę</button></div>`);
+    const qi = $("#inv-q");
+    qi.oninput = () => { query = qi.value; $("#inv-q-clear").style.display = query ? "" : "none"; drawRows(); };
+    qi.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); qi.blur(); const first = $("#inv-rows [data-pid]"); if (first) first.click(); } };
+    $("#inv-q-clear").onclick = () => { query = ""; qi.value = ""; $("#inv-q-clear").style.display = "none"; drawRows(); qi.focus(); };
     document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { mode = b.dataset.mode; draw(); });
     const bk = $("#bulk-keep");
     if (bk) bk.onclick = async () => { for (const p of same) await decide(p, p.shelfPrice, "keep"); draw(); renderAll(); toast("Zatwierdzono " + same.length); };
@@ -1125,7 +1213,7 @@ function openInvoice(id) {
       if (!confirm("Usunąć fakturę z listy? Historia cen produktów zostaje.")) return;
       S.invoices = S.invoices.filter(i => i.id !== inv.id); await DB.del("invoices", inv.id); closeModal(); renderAll();
     };
-    bindRows($("#inv-rows"), draw);
+    drawRows();
   };
   draw();
 }
@@ -1155,11 +1243,12 @@ function renderProducts() {
   const q = ($("#prod-search").value || "").toLowerCase().trim();
   const filter = $("#prod-filter").value;
   let list = [...S.products.values()];
-  if (q) list = list.filter(p => (p.name || "").toLowerCase().includes(q) || (p.eans || []).some(e => e.includes(q)) || (p.indeks || "").toLowerCase().includes(q));
+  let scores = null;
+  if (q) { scores = new Map(); list = list.filter(p => { const sc = Core.searchScore(q, p.name + " " + (p.invoiceName || ""), (p.eans || []).join(" ") + " " + (p.indeks || "")); if (sc > 0) scores.set(p.id, sc); return sc > 0; }); }
   if (filter === "open") list = list.filter(needsDecision);
   if (filter === "noean") list = list.filter(p => !(p.eans || []).length);
   if (filter.startsWith("cat:")) list = list.filter(p => p.category === filter.slice(4));
-  list.sort((a, b) => (a.name || "").localeCompare(b.name || "", "pl"));
+  list.sort((a, b) => scores ? (scores.get(b.id) - scores.get(a.id)) || (a.name || "").localeCompare(b.name || "", "pl") : (a.name || "").localeCompare(b.name || "", "pl"));
   $("#prod-count").textContent = `${list.length} produktów`;
   const box = $("#prod-list");
   box.innerHTML = list.slice(0, 300).map(p => priceRow(p)).join("") + (list.length > 300 ? `<div class="empty">Pokazano 300 z ${list.length} – zawęź wyszukiwanie.</div>` : "")
@@ -1201,7 +1290,7 @@ function openProduct(p, onClose) {
     const delta = pc && prevUnit ? ((uc - prevUnit) / prevUnit * 100) : null;
     const realM = p.shelfPrice != null && uc ? (s.marginMode === "marza" ? (p.shelfPrice - uc) / p.shelfPrice * 100 : (p.shelfPrice - uc) / uc * 100) : null;
     const need = needsDecision(p);
-    const cats = s.categories.map(c => `<button class="cat ${c.id === p.category ? "sel" : ""}" data-cat="${c.id}">${esc(c.name)} <small>${c.margin}%</small></button>`).join("");
+    const cats = s.categories.map(c => `<button class="cat ${c.id === p.category ? "sel" : ""}" style="--cc:${catColor(c.id)}" data-cat="${c.id}">${esc(c.name)} <small>${c.margin}%</small></button>`).join("");
     modal(`
       <textarea class="title-input" id="p-name" rows="${(p.name || "").length > 26 ? 2 : 1}">${esc(p.name)}</textarea>
       <div class="row-sub">${p.eans && p.eans.length ? "EAN: " + p.eans.map(esc).join(", ") : "brak EAN – zeskanuj produkt, żeby powiązać"}${p.indeks ? " · indeks hurtowni: " + esc(p.indeks) : ""}</div>
@@ -1416,6 +1505,7 @@ const Scanner = (() => {
 function renderSettings() {
   const s = S.settings;
   $("#set-cats").innerHTML = s.categories.map((c, i) => `<div class="inline cat-row">
+    <input type="color" class="cat-color" data-color="${i}" value="${catColor(c.id)}" aria-label="kolor">
     <input data-ci="${i}" data-f="name" value="${esc(c.name)}">
     <input data-ci="${i}" data-f="margin" inputmode="decimal" value="${c.margin}" class="pct"><span>%</span>
     <button class="btn small ${s.defaultCategory === c.id ? "primary" : ""}" data-def="${c.id}" title="domyślna">★</button>
@@ -1426,6 +1516,7 @@ function renderSettings() {
     else c.name = inp.value.trim() || c.name;
     await saveSettings(); renderAll();
   });
+  document.querySelectorAll("[data-color]").forEach(inp => inp.onchange = async () => { s.categories[+inp.dataset.color].color = inp.value; await saveSettings(); renderAll(); });
   document.querySelectorAll("[data-def]").forEach(b => b.onclick = async () => { s.defaultCategory = b.dataset.def; await saveSettings(); renderSettings(); });
   document.querySelectorAll("[data-rm]").forEach(b => b.onclick = async () => {
     const c = s.categories[+b.dataset.rm];
@@ -1515,7 +1606,7 @@ async function init() {
   $("#add-cat").onclick = async () => {
     const name = prompt("Nazwa kategorii:"); if (!name) return;
     const m = Core.parseNum(prompt("Narzut w %:", "30"));
-    S.settings.categories.push({ id: "c" + uid(), name, margin: isFinite(m) ? m : 30 }); await saveSettings(); renderSettings(); fillCatFilter();
+    S.settings.categories.push({ id: "c" + uid(), name, margin: isFinite(m) ? m : 30, color: CAT_PALETTE[S.settings.categories.length % CAT_PALETTE.length] }); await saveSettings(); renderSettings(); fillCatFilter();
   };
   $("#bk-export").onclick = backupExport;
   $("#bk-import").onchange = e => { const f = e.target.files[0]; e.target.value = ""; if (f) backupImport(f); };
