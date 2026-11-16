@@ -81,13 +81,25 @@ label{display:block;font-size:13px;color:var(--mut);font-weight:600}label input,
 input[type=search]::-webkit-search-cancel-button{display:none}
 .chip{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--same-bg);color:var(--same);white-space:nowrap}
 .chip.up{background:var(--up-bg);color:var(--up)}.chip.down{background:var(--down-bg);color:var(--down)}.chip.new{background:var(--new-bg);color:var(--new)}.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.row.st-up{background:color-mix(in srgb,var(--up) 7%,var(--card));border-color:color-mix(in srgb,var(--up) 35%,var(--line))}
+.row.st-up .price{color:var(--up)}
+.row-sub s{opacity:.7}
+.drink{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 7px;border-radius:7px;background:var(--info-bg,#d1e9ff);color:#175cd3;margin-left:2px}
+.drink.alko{background:#fce7f3;color:#9f1239}
+:root[data-theme=dark] .drink{background:#0b2545;color:#84caff}:root[data-theme=dark] .drink.alko{background:#3b0d1c;color:#fda4af}
+@media (prefers-color-scheme:dark){:root[data-theme=auto] .drink{background:#0b2545;color:#84caff}:root[data-theme=auto] .drink.alko{background:#3b0d1c;color:#fda4af}}
+.alert-up{display:block;width:100%;text-align:left;border:0;background:var(--up-bg);color:var(--up);font-weight:800;border-radius:12px;padding:11px 13px;margin:10px 0;font-size:14.5px}
+.big-alert{font-size:16px}
+.suggest.is-up{border-color:var(--up)}.suggest.is-up .big{color:var(--up)}
+.rl{padding-right:8px}.tick{flex:0 0 44px;height:44px;border-radius:12px;border:2px solid var(--ok);background:var(--ok-bg);color:var(--ok);font-size:20px;font-weight:900}
+.stat em{font-style:normal;color:var(--up);font-weight:800;font-size:15px;vertical-align:middle}
 .cat-select{--cc:var(--pri);display:block;width:100%;max-width:230px;padding:6px 8px 6px 10px;font-size:14px;font-weight:600;border-radius:9px;margin:6px 0 4px;border-left:5px solid var(--cc);background:color-mix(in srgb,var(--cc) 8%,var(--card))}
 .empty{text-align:center;color:var(--mut);padding:34px 10px}.empty-ic{font-size:34px;margin-bottom:6px}
 .inv{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:8px 0;cursor:pointer;box-shadow:var(--shadow)}
 .inv-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .bar{height:6px;background:var(--line);border-radius:99px;margin:10px 0 6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri);border-radius:99px;transition:width .3s}
 .seg{display:flex;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:3px;margin:12px 0;gap:3px}
-.seg button{flex:1;border:0;background:none;color:var(--mut);padding:8px 4px;border-radius:9px;font-size:13.5px;font-weight:650}
+.seg button{flex:1;border:0;background:none;color:var(--mut);padding:8px 4px;border-radius:9px;font-size:13px;font-weight:650;white-space:nowrap}.seg button.seg-up{color:var(--up)}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .hint{font-size:13px;color:var(--mut);background:var(--pri-soft);border-radius:10px;padding:9px 11px;margin:6px 0}
 .scan-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:10px;box-shadow:var(--shadow)}
@@ -133,6 +145,16 @@ pre.msg{white-space:pre-wrap;font:inherit;margin:8px 0}
 .sw.on{box-shadow:0 0 0 2px var(--ink)}
 #toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#101828;color:#fff;padding:11px 16px;border-radius:14px;opacity:0;transition:.2s;z-index:30;pointer-events:none;max-width:90%;text-align:center;font-weight:600;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 #toast.show{opacity:1;transform:translateX(-50%)}
+#snack{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto;display:flex;align-items:center;gap:10px;background:#101828;color:#fff;padding:10px 10px 10px 16px;border-radius:14px;z-index:31;transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s;font-weight:600;font-size:14.5px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+#snack.show{opacity:1;transform:none;pointer-events:auto}#snack span{flex:1}
+#snack button{border:0;background:rgba(255,255,255,.14);color:#fff;font-weight:800;padding:9px 14px;border-radius:10px}
+.p-title{font-size:21px;line-height:1.25;margin:4px 40px 6px 0;letter-spacing:-.3px}
+.suggest .up-head{display:inline-block;background:var(--up);color:#fff;font-weight:800;font-size:13px;border-radius:99px;padding:4px 11px;margin-bottom:4px}
+.suggest .small b{color:var(--ink)}.suggest .tol{margin-top:4px}
+.lbl{font-size:13px;color:var(--mut);font-weight:700;margin:14px 0 -4px}
+.small-cat{padding:6px 10px;font-size:13px}
+details label{margin-top:10px}
+.check{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px;color:var(--ink);font-weight:600}.check input{width:20px;height:20px;accent-color:var(--pri)}
 .filebtn{position:relative;overflow:hidden}.filebtn input{position:absolute;inset:0;opacity:0}
 .drop{border:2px dashed var(--line);border-radius:var(--r);padding:18px;text-align:center;background:var(--card)}
 .drop .btn{margin-top:10px}
@@ -192,7 +214,8 @@ pre.msg{white-space:pre-wrap;font:inherit;margin:8px 0}
         <label>Zaokrąglaj do<select id="set-step"><option value="0.01">1 gr</option><option value="0.05">5 gr</option><option value="0.1">10 gr</option><option value="0.5">50 gr</option><option value="1">1 zł</option></select></label>
         <label>W górę od reszty (zł)<input id="set-thr" inputmode="decimal"></label>
       </div>
-      <label>Końcówka<select id="set-end"><option value="0">pełna (3,50)</option><option value="1">minus 1 gr (3,49)</option><option value="5">minus 5 gr (3,45)</option></select></label>
+      <label>Nie zmieniaj ceny, gdy różnica mniejsza niż (zł)<input id="set-tol" inputmode="decimal" placeholder="0,10"></label>
+      <label style="margin-top:10px">Końcówka<select id="set-end"><option value="0">pełna (3,50)</option><option value="1">minus 1 gr (3,49)</option><option value="5">minus 5 gr (3,45)</option></select></label>
       <div class="hint" id="set-example" style="margin-top:10px"></div>
     </div>
     <div class="card">
@@ -217,6 +240,7 @@ pre.msg{white-space:pre-wrap;font:inherit;margin:8px 0}
 
 <div id="modal"><div class="sheet"><div class="sheet-top"><button id="modal-close" aria-label="Zamknij">✕</button></div><div id="modal-body"></div></div></div>
 <div id="toast"></div>
+<div id="snack"></div>
 
 <script>
 // Dekoder EAN-13 / EAN-8 / UPC-A z linii pikseli (skala szarości).
@@ -457,7 +481,7 @@ const Core = (() => {
   const DEFAULT_SETTINGS = {
     categories: [
       { id: "spozywka", name: "Spożywka", margin: 34, color: "#d97706" },
-      { id: "alkohol", name: "Alkohol", margin: 25, color: "#9f1239" },
+      { id: "alkohol", name: "Alkohol", margin: 25, color: "#9f1239", shelfTag: true },
       { id: "warzywa", name: "Warzywa i owoce", margin: 40, color: "#16a34a" },
       { id: "chemia", name: "Chemia i inne", margin: 30, color: "#2563eb" },
       { id: "papierosy", name: "Papierosy (cena stała)", margin: 0, color: "#78716c" }
@@ -467,7 +491,7 @@ const Core = (() => {
     roundStep: 0.10,            // zaokrąglanie do pełnych 10 gr (3.50, 5.70 ...)
     roundThreshold: 0.03,       // od ilu groszy reszty zaokrąglać w górę
     ending: 0,                  // odjąć grosze od wyniku (np. 1 → 3.49 zamiast 3.50)
-    changeTolerance: 0.00,      // różnica ceny, poniżej której nie proponujemy zmiany
+    changeTolerance: 0.10,      // różnica ceny, poniżej której nie proponujemy zmiany
     theme: "auto", accent: "morski", density: "normal"
   };
 
@@ -478,6 +502,18 @@ const Core = (() => {
     papierosy: ["papierosy", "l&m", "marlboro", "chesterfield", "camel ", "pall mall", "winston", "tytoń", "tyton", "iqos", "heets", "terea", "glo "]
   };
 
+  // napoje: całe słowa (W) albo początki słów (S*)
+  const DRINK_W = ["woda", "wody", "cola", "pepsi", "sprite", "fanta", "7up", "mirinda", "sok", "soki", "nektar", "tonic", "kompot", "piwo", "piwa", "wino", "wina", "rum", "gin",
+    "cydr", "radler", "whisky", "brandy", "spirytus", "likier", "oshee", "isostar", "powerade", "tiger", "cisowianka", "nałęczowianka", "muszynianka", "primavera", "staropolanka", "ustronianka"];
+  const DRINK_S = ["napój", "napoj", "napoje", "oranżad", "oranzad", "lemoniad", "energety", "wódk", "wodk", "nalewk", "szampan", "prosecco", "kubuś", "kubus", "tymbark", "ice tea", "icetea", "red bull", "coca-cola", "coca cola"];
+  function isDrink(name, cat) {
+    if (cat === "alkohol") return "alko";
+    const n = " " + (name || "").toLowerCase().replace(/[^a-ząćęłńóśźż0-9%&\- ]+/g, " ") + " ";
+    if (KEYWORDS.alkohol.some(k => n.includes(k))) return "alko";
+    const words = n.trim().split(/\s+/);
+    if (words.some(w => DRINK_W.includes(w)) || DRINK_S.some(k => n.includes(" " + k))) return "napoj";
+    return "";
+  }
   function nameKeys(name) {
     const w = (name || "").toLowerCase().replace(/[^a-ząćęłńóśźż ]+/g, " ").split(/\s+/).filter(x => x.length >= 3);
     return { one: w[0] || "", two: w.length > 1 ? w[0] + " " + w[1] : "" };
@@ -570,7 +606,11 @@ const Core = (() => {
     if (settings.marginMode === "marza") raw = m >= 0.99 ? cost * 100 : cost / (1 - m);
     else raw = cost * (1 + m);
     const p = roundPrice(raw, settings);
-    return { price: p, raw, cost, margin: m * 100 };
+    const shelf = product.shelfPrice;
+    const tol = Number(settings.changeTolerance) || 0;
+    // drobna różnica względem obecnej ceny → zostaw obecną
+    if (shelf != null && p !== shelf && Math.abs(p - shelf) < tol - 1e-9) return { price: shelf, computed: p, withinTol: true, raw, cost, margin: m * 100 };
+    return { price: p, computed: p, withinTol: false, raw, cost, margin: m * 100 };
   }
 
   // ---------- KSeF FA(2)/FA(3) XML ----------
@@ -836,8 +876,11 @@ const Core = (() => {
     }
     const seller = /eurocash/i.test(all) ? "Eurocash" : "";
     const items = rows.filter(r => r.qty > 0 && r.valueNet > 0 && r.name).map(r => {
-      const net = r.valueNet / r.qty;
-      return { name: r.name, indeks: "", gtin: r.gtin, unit: r.unit || "szt", qty: r.qty, vat: r.vat, net, gross: net * (1 + r.vat / 100), mismatch: r.mismatch };
+      // bon = zniżka dla sklepu: cenę na półkę liczymy od ceny PRZED bonem, zapłaconą zapisujemy osobno
+      const paid = r.valueNet / r.qty;
+      const net = r.bon > 0 && r.priceNet > 0 ? r.priceNet : paid;
+      return { name: r.name, indeks: "", gtin: r.gtin, unit: r.unit || "szt", qty: r.qty, vat: r.vat, net, gross: net * (1 + r.vat / 100),
+        bon: r.bon || 0, netPaid: paid, grossPaid: paid * (1 + r.vat / 100), mismatch: r.mismatch };
     });
     return { number, date, seller, kind: /korekt/i.test(all.slice(0, 600)) ? "KOR" : "VAT", items, format: "PDF" };
   }
@@ -892,11 +935,11 @@ const Core = (() => {
 
   function fmt(x) { return x === null || x === undefined || !isFinite(x) ? "—" : x.toFixed(2).replace(".", ","); }
 
-  return { norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, parseKsefXml, parseCsv, fmt };
+  return { isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, parseKsefXml, parseCsv, fmt };
 })();
 
 
-const APP_VERSION = "5";
+const APP_VERSION = "7";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -999,6 +1042,8 @@ async function decide(p, price, action) {
   p.priceHistory = p.priceHistory || [];
   p.priceHistory.push({ date: today(), price, prev, action, invoiceId: p.lastCost ? p.lastCost.invoiceId : null, cost: Core.unitCost(p) });
   p.shelfPrice = price;
+  if (prev === null || Math.abs(price - prev) > 1e-9) p.relabel = { from: p.relabel ? p.relabel.from : prev, to: price, date: today(), up: (p.relabel ? p.relabel.from : prev) != null && price > (p.relabel ? p.relabel.from : prev) };
+  if (p.relabel && p.relabel.from != null && Math.abs(p.relabel.from - price) < 1e-9) delete p.relabel;
   if (p.lastCost) p.decidedFor = p.lastCost.invoiceId;
   await saveProduct(p);
 }
@@ -1080,6 +1125,7 @@ async function applyInvoice(inv, fileName) {
     if (it.name) p.name = p.name || it.name;
     p.invoiceName = it.name;
     const cost = { net: it.net, gross: it.gross, vat: it.vat, unit: it.unit, qty: it.qty, date: record.date, invoiceId: id, invoiceNo: inv.number };
+    if (it.bon > 0) { cost.bon = it.bon; cost.grossPaid = it.grossPaid; }
     if (p.lastCost && p.lastCost.invoiceId === id) { p.costHistory[p.costHistory.length - 1] = cost; }
     else p.costHistory.push(cost);
     p.lastCost = cost;
@@ -1109,16 +1155,51 @@ function show(tab) {
 
 function renderAll() { renderInvoices(); renderProducts(); renderRecent(); renderStats(); }
 
+function relabelList() { return [...S.products.values()].filter(p => p.relabel); }
 function renderStats() {
   const ps = [...S.products.values()];
   const open = ps.filter(needsDecision).length;
-  const up = ps.filter(p => needsDecision(p) && p.shelfPrice != null && (Core.suggestedPrice(p, S.settings)?.price || 0) > p.shelfPrice).length;
+  const rl = relabelList(), rlUp = rl.filter(p => p.relabel.up).length;
   $("#stats").innerHTML = `
     <button class="stat ${open ? "hot" : ""}" data-go="open"><b>${open}</b><span>do decyzji</span></button>
-    <button class="stat ${up ? "warn" : ""}" data-go="open"><b>${up}</b><span>podwyżek</span></button>
+    <button class="stat ${rlUp ? "warn" : ""}" id="go-relabel"><b>${rl.length}${rlUp ? ` <em>▲${rlUp}</em>` : ""}</b><span>do oznaczenia</span></button>
     <button class="stat" data-go="all"><b>${ps.length}</b><span>produktów</span></button>`;
   document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { $("#prod-filter").value = b.dataset.go; show("products"); });
+  $("#go-relabel").onclick = openRelabel;
   const badge = $("#nav-badge"); badge.textContent = open > 99 ? "99+" : open; badge.style.display = open ? "" : "none";
+}
+
+// kolejność ważności: podwyżki napojów/alkoholu, inne podwyżki, nowe, obniżki, reszta
+function urgency(p) {
+  const st = statusOf(p).cls, drink = Core.isDrink(p.invoiceName || p.name, p.category) ? 1 : 0;
+  return st === "up" ? (drink ? 0 : 1) : st === "new" ? 2 : st === "down" ? 3 : st === "same" ? 4 : 5;
+}
+
+function isShelfTag(p) { const c = S.settings.categories.find(c => c.id === p.category); return !!(c && c.shelfTag); }
+function openRelabel() {
+  const draw = () => {
+    const isD = p => Core.isDrink(p.invoiceName || p.name, p.category) ? 1 : 0;
+    const list = relabelList().sort((a, b) => (b.relabel.up - a.relabel.up) || (isD(b) - isD(a)) || (a.name || "").localeCompare(b.name || "", "pl"));
+    const shelfL = list.filter(isShelfTag), tagL = list.filter(p => !isShelfTag(p));
+    const up = tagL.filter(p => p.relabel.up), other = tagL.filter(p => !p.relabel.up);
+    const row = p => `<div class="row rl ${p.relabel.up ? "st-up" : "st-ok"}" data-pid="${p.id}">
+      <div class="row-main"><div class="row-title">${esc(p.name)}</div><div class="row-sub">${catTag(p.category)}${drinkBadge(p)}</div></div>
+      <div class="row-side"><div class="price">${F(p.relabel.to)}</div><div class="row-sub">${p.relabel.from != null ? `<s>${F(p.relabel.from)}</s> ${p.relabel.up ? "▲" : "▼"}` : "nowa"}</div></div>
+      <button class="tick" data-done="${p.id}" aria-label="Zrobione">✓</button></div>`;
+    const upAll = list.filter(p => p.relabel.up).length;
+    modal(`<h2>Do oznaczenia</h2><div class="row-sub">Produkty ze zmienioną ceną. Odhacz ✓, kiedy cena jest już zmieniona na sklepie.</div>
+      ${upAll ? `<div class="alert-up">▲ ${upAll} ${plural(upAll, "podwyżka", "podwyżki", "podwyżek")} do oznaczenia</div>` : ""}
+      ${up.length ? `<h3>🏷️ Metki – podwyżki</h3>` + up.map(row).join("") : ""}
+      ${other.length ? `<h3>🏷️ Metki – obniżki i nowe</h3>` + other.map(row).join("") : ""}
+      ${shelfL.length ? `<h3>🪧 Cenówki na półce</h3>` + shelfL.map(row).join("") : ""}
+      ${list.length ? `<button class="btn wide" id="rl-all">✓ Wszystko oznaczone</button>` : `<div class="empty"><div class="empty-ic">🏷️</div>Wszystko oznaczone</div>`}`);
+    document.querySelectorAll("[data-done]").forEach(b => b.onclick = async e => { e.stopPropagation(); const p = S.products.get(b.dataset.done); delete p.relabel; await saveProduct(p); renderStats(); draw(); });
+    const all = $("#rl-all");
+    if (all) all.onclick = async () => { if (!confirm(`Oznaczyć ${list.length} produktów jako zrobione?`)) return; for (const p of list) { delete p.relabel; await saveProduct(p); } renderStats(); draw(); };
+    bindRows($("#modal-body"), draw);
+    $("#modal")._redraw = draw;
+  };
+  draw();
 }
 
 function statusOf(p) {
@@ -1126,19 +1207,25 @@ function statusOf(p) {
   if (!p.lastCost) return { cls: "muted", label: "bez kosztu", sp };
   if (!needsDecision(p)) return { cls: "ok", label: "✓", sp };
   if (p.shelfPrice == null) return { cls: "new", label: "nowy", sp };
-  if (sp && sp.price > p.shelfPrice + 1e-9) return { cls: "up", label: "▲ +" + F(sp.price - p.shelfPrice), sp };
+  if (sp && sp.price > p.shelfPrice + 1e-9) return { cls: "up", label: "▲ PODWYŻKA +" + F(sp.price - p.shelfPrice), sp };
   if (sp && sp.price < p.shelfPrice - 1e-9) return { cls: "down", label: "▼ " + F(sp.price - p.shelfPrice), sp };
   return { cls: "same", label: "bez zmian", sp };
 }
 
+function plural(n, one, few, many) { const d = n % 10, t = n % 100; return n === 1 ? one : (d >= 2 && d <= 4 && (t < 12 || t > 14)) ? few : many; }
+function drinkBadge(p) {
+  const d = Core.isDrink(p.invoiceName || p.name, p.category);
+  if (d === "alko" && p.category === "alkohol") return "";
+  return d === "alko" ? `<span class="drink alko">🍺 alkohol</span>` : d === "napoj" ? `<span class="drink">🥤 napój</span>` : "";
+}
 function priceRow(p, opts = {}) {
   const st = statusOf(p), sp = st.sp;
   const catSel = opts.catEdit ? `<select class="cat-select" style="--cc:${catColor(p.category)}" data-catfor="${p.id}">${S.settings.categories.map(c => `<option value="${c.id}" ${c.id === p.category ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select>` : "";
   return `<div class="row st-${st.cls}" data-pid="${p.id}">
     <div class="row-main"><div class="row-title">${esc(p.name)}</div>
-    <div class="row-sub">${catSel || catTag(p.category)} zakup ${F(Core.unitCost(p))} zł${p.packQty > 1 ? " (÷" + p.packQty + ")" : ""}</div></div>
+    <div class="row-sub">${catSel || catTag(p.category)}${st.cls === "up" ? drinkBadge(p) : ""} zakup ${F(Core.unitCost(p))} zł${p.packQty > 1 ? " (÷" + p.packQty + ")" : ""}</div></div>
     <div class="row-side"><div class="price">${sp ? F(sp.price) : "—"}</div>
-    <div class="row-sub">${p.shelfPrice != null ? "półka " + F(p.shelfPrice) : "brak ceny"}</div>
+    <div class="row-sub">${p.shelfPrice != null ? (st.cls === "up" ? `<s>${F(p.shelfPrice)}</s>` : "półka " + F(p.shelfPrice)) : "brak ceny"}</div>
     <span class="chip ${st.cls}">${st.label}</span></div></div>`;
 }
 
@@ -1196,7 +1283,8 @@ function openInvoice(id) {
   const isOpen = p => needsDecision(p) && p.lastCost.invoiceId === inv.id;
   const drawRows = () => {
     const ps = products();
-    let list = mode === "open" ? ps.filter(isOpen) : ps;
+    let list = mode === "open" ? ps.filter(isOpen) : mode === "up" ? ps.filter(p => isOpen(p) && statusOf(p).cls === "up") : ps;
+    if (mode !== "cat") list.sort((a, b) => urgency(a) - urgency(b) || (a.name || "").localeCompare(b.name || "", "pl"));
     const q = query.trim();
     if (q) {
       // szukamy w całej fakturze; pozycje do decyzji wyżej
@@ -1212,18 +1300,22 @@ function openInvoice(id) {
     const ps = products();
     const same = ps.filter(p => isOpen(p) && p.shelfPrice != null && Core.suggestedPrice(p, S.settings)?.price === p.shelfPrice);
     const pr = invProgress(inv);
+    const ups = ps.filter(p => isOpen(p) && statusOf(p).cls === "up");
+    const upDrinks = ups.filter(p => Core.isDrink(p.invoiceName || p.name, p.category)).length;
     modal(`<h2>${esc(inv.number)}</h2><div class="row-sub">${esc(inv.date)} · ${esc(inv.seller || "")} · ${pr.done}/${pr.total} gotowe</div>
       <div class="bar"><i style="width:${pr.total ? Math.round(pr.done / pr.total * 100) : 100}%"></i></div>
       <div class="search sticky-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="inv-q" type="search" placeholder="Szukaj w fakturze, np. „zubr”, „jogurt 150”" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" value="${esc(query)}">
         <button class="clear" id="inv-q-clear" aria-label="Wyczyść" style="${query ? "" : "display:none"}">✕</button></div>
+      ${ups.length ? `<button class="alert-up" data-mode="up">▲ ${ups.length} ${plural(ups.length, "podwyżka", "podwyżki", "podwyżek")}${upDrinks ? ` · w tym napoje/alkohol: ${upDrinks}` : ""} – pokaż</button>` : ""}
       <div class="seg">
-        <button data-mode="open" class="${mode === "open" ? "on" : ""}">Do decyzji (${pr.open})</button>
-        <button data-mode="all" class="${mode === "all" ? "on" : ""}">Wszystkie (${pr.total})</button>
+        <button data-mode="open" class="${mode === "open" ? "on" : ""}">Do decyzji ${pr.open}</button>
+        <button data-mode="up" class="${mode === "up" ? "on" : ""} ${ups.length ? "seg-up" : ""}">▲ ${ups.length}</button>
+        <button data-mode="all" class="${mode === "all" ? "on" : ""}">Wszystkie</button>
         <button data-mode="cat" class="${mode === "cat" ? "on" : ""}">Kategorie</button>
       </div>
       ${mode === "cat" ? `<div class="hint">Sprawdź kategorie po imporcie. Zmiana jest zapamiętywana – następnym razem podobne nazwy dostaną ją same.</div>` : ""}
-      ${same.length && mode !== "cat" ? `<button class="btn wide" id="bulk-keep">✓ Zatwierdź ${same.length} poz., gdzie cena się nie zmienia</button>` : ""}
+      ${same.length && mode !== "cat" ? `<button class="btn wide" id="bulk-keep">✓ Zatwierdź bez zmian ceny (${same.length})</button>` : ""}
       <div class="small" id="inv-count"></div>
       <div id="inv-rows"></div>
       <div class="btns"><button class="btn" id="inv-csv">Eksport CSV</button><button class="btn danger" id="inv-del">Usuń fakturę</button></div>`);
@@ -1240,6 +1332,7 @@ function openInvoice(id) {
       S.invoices = S.invoices.filter(i => i.id !== inv.id); await DB.del("invoices", inv.id); closeModal(); renderAll();
     };
     drawRows();
+    $("#modal")._redraw = draw;
   };
   draw();
 }
@@ -1314,52 +1407,62 @@ function openProduct(p, onClose) {
     const pack = Number(p.packQty) || 1;
     const prevUnit = pc ? pc.gross / pack : null;
     const delta = pc && prevUnit ? ((uc - prevUnit) / prevUnit * 100) : null;
+    const mWord = s.marginMode === "marza" ? "marża" : "narzut";
     const realM = p.shelfPrice != null && uc ? (s.marginMode === "marza" ? (p.shelfPrice - uc) / p.shelfPrice * 100 : (p.shelfPrice - uc) / uc * 100) : null;
-    const need = needsDecision(p);
-    const cats = s.categories.map(c => `<button class="cat ${c.id === p.category ? "sel" : ""}" style="--cc:${catColor(c.id)}" data-cat="${c.id}">${esc(c.name)} <small>${c.margin}%</small></button>`).join("");
+    const shelf = p.shelfPrice;
+    const isUp = sp && shelf != null && sp.price > shelf + 1e-9;
+    const same = sp && shelf != null && Math.abs(sp.price - shelf) < 1e-9;
+    const cats = s.categories.map(c => `<button class="cat small-cat ${c.id === p.category ? "sel" : ""}" style="--cc:${catColor(c.id)}" data-cat="${c.id}">${esc(c.name)} <small>${c.margin}%</small></button>`).join("");
+    const pctStr = x => x.toFixed(1).replace(".", ",") + "%";
     modal(`
-      <textarea class="title-input" id="p-name" rows="${(p.name || "").length > 26 ? 2 : 1}">${esc(p.name)}</textarea>
-      <div class="row-sub">${p.eans && p.eans.length ? "EAN: " + p.eans.map(esc).join(", ") : "brak EAN – zeskanuj produkt, żeby powiązać"}${p.indeks ? " · indeks hurtowni: " + esc(p.indeks) : ""}</div>
-      ${p.invoiceName && p.invoiceName !== p.name ? `<div class="row-sub">Na fakturze: ${esc(p.invoiceName)}</div>` : ""}
+      <h2 class="p-title">${esc(p.name)}</h2>
+      <div class="row-sub">${catTag(p.category)}${drinkBadge(p)} ${p.eans && p.eans.length ? "EAN " + p.eans.map(esc).join(", ") : "brak EAN – zeskanuj, żeby powiązać"}</div>
 
+      ${!p.lastCost ? `<div class="box"><div class="kv"><b>Brak ceny zakupu</b></div>
+          <div class="inline"><input id="p-mancost" inputmode="decimal" placeholder="Cena zakupu brutto/szt, np. 2,61"><button class="btn" id="p-savecost">Zapisz</button></div></div>` : ""}
+
+      ${sp ? `<div class="suggest ${isUp ? "is-up" : ""}">
+        ${isUp ? `<div class="up-head">▲ PODWYŻKA +${F(sp.price - shelf)} zł</div>` : ""}
+        <div class="small">${same ? "Cena bez zmian" : "Nowa cena"}</div>
+        <div class="big">${F(sp.price)} zł</div>
+        <div class="small">${shelf != null ? `teraz na półce <b>${F(shelf)} zł</b>` : "brak zapisanej ceny na półce"} · ${mWord} ${sp.margin}%</div>
+        ${sp.withinTol ? `<div class="small tol">wyliczone ${F(sp.computed)} zł – różnica poniżej ${F(Number(s.changeTolerance))} zł, zostaje obecna</div>` : ""}
+      </div>
+      <div class="btns big-btns">
+        <button class="btn primary" id="p-apply">${same ? "✓ Zatwierdź " + F(sp.price) : "✓ Ustaw " + F(sp.price) + " zł"}</button>
+        ${shelf != null && !same ? `<button class="btn" id="p-keep">Zostaw ${F(shelf)}</button>` : ""}
+      </div>` : ""}
+      <div class="inline"><input id="p-custom" inputmode="decimal" placeholder="${shelf == null ? "Obecna cena na półce, np. 3,49" : "Inna cena, np. 3,49"}"><button class="btn" id="p-setcustom">Ustaw</button></div>
+
+      ${p.lastCost ? `<div class="box">
+        <div class="kv"><span>Zakup ${esc(p.lastCost.date)}</span><b>${F(uc)} zł brutto/szt</b></div>
+        ${pc ? `<div class="kv small"><span>Poprzednia dostawa ${esc(pc.date)}</span><span>${F(prevUnit)} zł ${delta !== null && Math.abs(delta) >= 0.05 ? `<b class="${delta > 0 ? "up" : "down"}">${delta > 0 ? "+" : ""}${pctStr(delta)}</b>` : ""}</span></div>` : ""}
+        ${realM !== null && !same ? `<div class="kv small"><span>${mWord} przy obecnej cenie</span><span class="${sp && realM < sp.margin - 2 ? "up" : ""}">${pctStr(realM)}</span></div>` : ""}
+        ${p.lastCost.bon ? `<div class="kv small"><span>🎟 Bon −${String(+p.lastCost.bon.toFixed(2)).replace(".", ",")}% (Wasza zniżka), zapłacone ${F(p.lastCost.grossPaid / pack)} zł/szt</span></div>` : ""}
+        <div class="kv small"><span>netto ${F(p.lastCost.net / pack)} · VAT ${p.lastCost.vat}% · na fakturze ${F(p.lastCost.qty)} ${esc(p.lastCost.unit || "")} po ${F(p.lastCost.gross)}${pack > 1 ? ` ÷ ${pack} szt.` : ""}</span></div>
+      </div>` : ""}
+
+      <div class="lbl">Kategoria</div>
       <div class="cats">${cats}</div>
 
-      <div class="grid2">
-        <label>Szt. w opakowaniu z faktury<input id="p-pack" inputmode="decimal" value="${pack}"></label>
-        <label>Własny narzut % (puste = kategoria)<input id="p-mo" inputmode="decimal" value="${p.marginOverride ?? ""}"></label>
-      </div>
-
-      <div class="box">
-        ${p.lastCost ? `
-          <div class="kv"><span>Zakup (${esc(p.lastCost.date)}, ${esc(p.lastCost.invoiceNo || "")})</span><b>${F(uc)} zł brutto/szt</b></div>
-          <div class="kv small"><span>netto ${F(p.lastCost.net / pack)} · VAT ${p.lastCost.vat}% · na fakturze ${F(p.lastCost.qty)} ${esc(p.lastCost.unit || "")} po ${F(p.lastCost.gross)}</span></div>
-          ${pc ? `<div class="kv small"><span>Poprzednia dostawa ${esc(pc.date)}</span><span>${F(prevUnit)} zł ${delta !== null ? `<b class="${delta > 0 ? "up" : delta < 0 ? "down" : ""}">${delta > 0 ? "+" : ""}${delta.toFixed(1).replace(".", ",")}%</b>` : ""}</span></div>` : ""}
-        ` : `<div class="kv"><span>Brak kosztu z faktury</span></div>
-          <label>Wpisz cenę zakupu brutto/szt<input id="p-mancost" inputmode="decimal" placeholder="np. 2,61"></label>
-          <button class="btn" id="p-savecost">Zapisz koszt</button>`}
-      </div>
-
-      ${sp ? `<div class="suggest"><div class="small">Proponowana cena (${s.marginMode === "marza" ? "marża" : "narzut"} ${sp.margin}% → ${F(sp.raw)})</div><div class="big">${F(sp.price)} zł</div></div>` : ""}
-      <div class="kv"><span>Obecna cena na półce</span><b>${p.shelfPrice != null ? F(p.shelfPrice) + " zł" : "—"}</b></div>
-      ${realM !== null ? `<div class="kv small"><span>Przy obecnej cenie ${s.marginMode === "marza" ? "marża" : "narzut"}</span><span class="${realM < sp?.margin - 2 ? "up" : ""}">${realM.toFixed(1).replace(".", ",")}%</span></div>` : ""}
-
-      <div class="btns big-btns">
-        ${sp ? `<button class="btn primary" id="p-apply">${p.shelfPrice != null && sp.price === p.shelfPrice ? "Cena OK – " + F(sp.price) : "Zmień na " + F(sp.price)}</button>` : ""}
-        ${p.shelfPrice != null && (!sp || sp.price !== p.shelfPrice) ? `<button class="btn" id="p-keep">Zostaw ${F(p.shelfPrice)}</button>` : ""}
-      </div>
-      <div class="inline"><input id="p-custom" inputmode="decimal" placeholder="Obecna lub inna cena, np. 3,49"><button class="btn" id="p-setcustom">Ustaw</button></div>
-      ${need ? `<div class="row-sub warn-text">● Ta dostawa czeka na decyzję</div>` : ""}
-
-      <details><summary>Historia</summary>
-        <h4>Ceny zakupu</h4>
+      <details><summary>Więcej</summary>
+        <label>Nazwa<input id="p-name" value="${esc(p.name)}"></label>
+        ${p.invoiceName && p.invoiceName !== p.name ? `<div class="row-sub">Na fakturze: ${esc(p.invoiceName)}</div>` : ""}
+        <div class="grid2">
+          <label>Szt. w opakowaniu z faktury<input id="p-pack" inputmode="decimal" value="${pack}"></label>
+          <label>Własny ${mWord} % <small>(puste = kategoria)</small><input id="p-mo" inputmode="decimal" value="${p.marginOverride ?? ""}"></label>
+        </div>
+        <button class="btn danger small" id="p-del">Usuń produkt</button>
+      </details>
+      <details><summary>Historia cen</summary>
+        <h4>Zakup</h4>
         ${(p.costHistory || []).slice().reverse().map(c => `<div class="kv small"><span>${esc(c.date)} · ${esc(c.invoiceNo || "")}</span><span>${F(c.gross / pack)} zł</span></div>`).join("") || "<div class='small'>—</div>"}
-        <h4>Ceny na półce</h4>
+        <h4>Na półce</h4>
         ${(p.priceHistory || []).slice().reverse().map(h => `<div class="kv small"><span>${esc(h.date)} · ${h.action === "keep" ? "bez zmian" : h.action === "manual" ? "ręcznie" : "zmiana"}</span><span>${h.prev != null && h.prev !== h.price ? F(h.prev) + " → " : ""}${F(h.price)} zł</span></div>`).join("") || "<div class='small'>—</div>"}
       </details>
-      <div class="btns"><button class="btn danger" id="p-del">Usuń produkt</button></div>
     `, onClose);
 
-    $("#p-name").onchange = async e => { p.name = e.target.value.replace(/\s+/g, " ").trim() || p.name; await saveProduct(p); renderAll(); };
+    $("#p-name").onchange = async e => { p.name = e.target.value.replace(/\s+/g, " ").trim() || p.name; await saveProduct(p); draw(); renderAll(); };
     document.querySelectorAll("[data-cat]").forEach(b => b.onclick = async () => { await setCategory(p, b.dataset.cat); draw(); renderAll(); });
     $("#p-pack").onchange = async e => { const v = Core.parseNum(e.target.value); p.packQty = v > 0 ? v : 1; await saveProduct(p); draw(); renderAll(); };
     $("#p-mo").onchange = async e => { const v = Core.parseNum(e.target.value); p.marginOverride = isFinite(v) ? v : null; await saveProduct(p); draw(); renderAll(); };
@@ -1371,15 +1474,14 @@ function openProduct(p, onClose) {
       p.costHistory = p.costHistory || []; p.costHistory.push(c); p.lastCost = c; p.packQty = 1;
       await saveProduct(p); draw(); renderAll();
     };
+    const finish = async (price, action, msg) => { await decideWithUndo(p, price, action, msg); closeModal(); renderAll(); };
     const ap = $("#p-apply");
-    if (ap) ap.onclick = async () => { await decide(p, sp.price, sp.price === p.shelfPrice ? "keep" : "change"); toast("Cena: " + F(sp.price) + " zł"); closeModal(); renderAll(); };
+    if (ap) ap.onclick = () => finish(sp.price, same ? "keep" : "change", (same ? "Bez zmian: " : "Nowa cena: ") + F(sp.price) + " zł");
     const kp = $("#p-keep");
-    if (kp) kp.onclick = async () => { await decide(p, p.shelfPrice, "keep"); toast("Zostawiono " + F(p.shelfPrice) + " zł"); closeModal(); renderAll(); };
-    $("#p-setcustom").onclick = async () => {
-      const v = Core.parseNum($("#p-custom").value);
-      if (!(v > 0)) return toast("Podaj poprawną cenę");
-      await decide(p, Math.round(v * 100) / 100, "manual"); toast("Cena: " + F(v) + " zł"); closeModal(); renderAll();
-    };
+    if (kp) kp.onclick = () => finish(shelf, "keep", "Zostawiono " + F(shelf) + " zł");
+    const custom = () => { const v = Core.parseNum($("#p-custom").value); if (!(v > 0)) return toast("Wpisz cenę, np. 3,49"); finish(Math.round(v * 100) / 100, "manual", "Cena: " + F(v) + " zł"); };
+    $("#p-setcustom").onclick = custom;
+    $("#p-custom").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); custom(); } };
     $("#p-del").onclick = async () => {
       if (!confirm("Usunąć produkt i jego historię?")) return;
       S.products.delete(p.id); await DB.del("products", p.id); closeModal(); renderAll();
@@ -1388,12 +1490,30 @@ function openProduct(p, onClose) {
   draw();
 }
 
+// decyzja + pasek „Cofnij”
+async function decideWithUndo(p, price, action, msg) {
+  const before = JSON.parse(JSON.stringify(p));
+  await decide(p, price, action);
+  snack(msg, "Cofnij", async () => {
+    S.products.set(before.id, before); await DB.put("products", before);
+    renderAll(); if ($("#modal").classList.contains("open") && $("#modal")._redraw) $("#modal")._redraw();
+    toast("Cofnięto");
+  });
+}
+function snack(msg, actionLabel, onAction) {
+  const el = $("#snack");
+  el.innerHTML = `<span>${esc(msg)}</span><button>${esc(actionLabel)}</button>`;
+  el.classList.add("show");
+  clearTimeout(snack._t); snack._t = setTimeout(() => el.classList.remove("show"), 6000);
+  el.querySelector("button").onclick = () => { el.classList.remove("show"); clearTimeout(snack._t); onAction(); };
+}
+
 // ===================== Nieznany kod =====================
 function unknownCode(code) {
   let q = "";
   const draw = () => {
     let list = [...S.products.values()].filter(p => !(p.eans || []).length);
-    if (q) list = list.filter(p => (p.name || "").toLowerCase().includes(q) || (p.invoiceName || "").toLowerCase().includes(q));
+    if (q) list = list.filter(p => Core.searchScore(q, p.name + " " + (p.invoiceName || "")) > 0);
     list.sort((a, b) => (b.lastCost?.date || "").localeCompare(a.lastCost?.date || ""));
     $("#link-rows").innerHTML = list.slice(0, 80).map(p => `<div class="row" data-link="${p.id}"><div class="row-main"><div class="row-title">${esc(p.name)}</div>
       <div class="row-sub">${esc(p.lastCost?.date || "")} · ${F(Core.unitCost(p))} zł</div></div><div class="row-side"><span class="chip">powiąż</span></div></div>`).join("")
@@ -1439,7 +1559,7 @@ function modal(html, onClose) {
   if (!m.classList.contains("open")) { m.classList.add("open"); $("#modal-body").scrollTop = 0; }
 }
 function closeModal() {
-  const m = $("#modal"); m.classList.remove("open");
+  const m = $("#modal"); m.classList.remove("open"); m._redraw = null;
   const cb = m._onClose; m._onClose = null; if (cb) cb();
 }
 function alertBox(msg) { modal(`<pre class="msg">${esc(msg)}</pre><div class="btns"><button class="btn primary" onclick="closeModal()">OK</button></div>`, null); }
@@ -1539,7 +1659,8 @@ function renderSettings() {
       <div class="pct-wrap"><input data-ci="${i}" data-f="margin" inputmode="decimal" value="${c.margin}" aria-label="Narzut"><span>%</span></div>
       <button class="btn small ${s.defaultCategory === c.id ? "primary" : ""}" data-def="${c.id}">${s.defaultCategory === c.id ? "★ Domyślna" : "☆ Domyślna"}</button>
       <button class="btn small danger icon-btn" data-rm="${i}" aria-label="Usuń kategorię">🗑</button>
-    </div></div>`).join("");
+    </div>
+    <label class="check"><input type="checkbox" data-shelf="${i}" ${c.shelfTag ? "checked" : ""}> Cenówka na półce zamiast metek</label></div>`).join("");
   document.querySelectorAll("[data-ci]").forEach(inp => inp.onchange = async () => {
     const c = s.categories[+inp.dataset.ci];
     if (inp.dataset.f === "margin") { const v = Core.parseNum(inp.value); if (isFinite(v)) c.margin = v; }
@@ -1547,6 +1668,7 @@ function renderSettings() {
     await saveSettings(); renderAll();
   });
   document.querySelectorAll("[data-color]").forEach(inp => inp.onchange = async () => { s.categories[+inp.dataset.color].color = inp.value; await saveSettings(); renderSettings(); renderAll(); });
+  document.querySelectorAll("[data-shelf]").forEach(cb => cb.onchange = async () => { s.categories[+cb.dataset.shelf].shelfTag = cb.checked; await saveSettings(); });
   document.querySelectorAll("[data-def]").forEach(b => b.onclick = async () => { s.defaultCategory = b.dataset.def; await saveSettings(); renderSettings(); });
   document.querySelectorAll("[data-rm]").forEach(b => b.onclick = async () => {
     const c = s.categories[+b.dataset.rm];
@@ -1565,6 +1687,7 @@ function renderSettings() {
   $("#set-step").value = String(s.roundStep);
   $("#set-thr").value = F(s.roundThreshold);
   $("#set-end").value = String(s.ending || 0);
+  $("#set-tol").value = F(Number(s.changeTolerance) || 0);
   updateExample();
 }
 function updateExample() {
@@ -1624,6 +1747,8 @@ async function init() {
   await DB.open();
   await loadAll();
   await migrateCategories();
+  if (!S.settings.settingsVer) { if (!Number(S.settings.changeTolerance)) S.settings.changeTolerance = 0.10; S.settings.settingsVer = 2; await saveSettings(); }
+  if (S.settings.settingsVer < 3) { const a = S.settings.categories.find(c => c.id === "alkohol"); if (a && a.shelfTag === undefined) a.shelfTag = true; S.settings.settingsVer = 3; await saveSettings(); }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 
   document.querySelectorAll("nav button").forEach(b => b.onclick = () => show(b.dataset.tab));
@@ -1650,6 +1775,7 @@ async function init() {
   $("#set-mode").onchange = async e => { S.settings.marginMode = e.target.value; await saveSettings(); updateExample(); renderAll(); };
   $("#set-step").onchange = async e => { S.settings.roundStep = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
   $("#set-thr").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v)) S.settings.roundThreshold = v; await saveSettings(); updateExample(); renderAll(); };
+  $("#set-tol").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v) && v >= 0) S.settings.changeTolerance = v; await saveSettings(); renderAll(); };
   $("#set-end").onchange = async e => { S.settings.ending = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
   $("#add-cat").onclick = async () => {
     const name = prompt("Nazwa kategorii:"); if (!name) return;
