@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Cenownik">
+<meta name="theme-color" content="#0f766e">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Cenownik</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--ink:#14181f;--mut:#667085;--line:#e4e7ec;--pri:#0f766e;--pri-ink:#fff;--warn:#b54708;--warn-bg:#fef0c7;--ok:#067647;--ok-bg:#dcfae6;--info:#175cd3;--info-bg:#d1e9ff;--danger:#b42318}
+@media (prefers-color-scheme:dark){:root{--bg:#0c0f14;--card:#161b22;--ink:#e6e8eb;--mut:#98a2b3;--line:#2a313c;--pri:#14b8a6;--pri-ink:#04201d;--warn:#fdb022;--warn-bg:#3d2a05;--ok:#47cd89;--ok-bg:#0b2e1c;--info:#84caff;--info-bg:#0b2545;--danger:#f97066}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top) + 10px) 16px 8px;font-weight:700;font-size:20px}
+main{padding:0 12px calc(90px + env(safe-area-inset-bottom))}
+.tab{display:none}.tab.active{display:block}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:6}
+nav button{flex:1;border:0;background:none;color:var(--mut);padding:9px 0 7px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:22px;line-height:1}
+nav button.active{color:var(--pri);font-weight:600}
+h2{margin:4px 0 2px;font-size:20px}h3{margin:18px 4px 6px;font-size:15px;color:var(--mut);font-weight:600}h4{margin:12px 0 4px;font-size:14px}
+.card{background:var(--card);border-radius:14px;padding:14px;margin:10px 0;border:1px solid var(--line)}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:11px;padding:11px 14px;font-size:15px;font-weight:600;cursor:pointer}
+.btn.primary{background:var(--pri);border-color:var(--pri);color:var(--pri-ink)}
+.btn.danger{color:var(--danger)}.btn.small{padding:7px 10px;font-size:13px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.big-btns .btn{flex:1;padding:15px 10px;font-size:17px}
+input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+label{display:block;font-size:13px;color:var(--mut)}label input,label select{margin-top:4px}
+.inline{display:flex;gap:8px;align-items:center;margin:8px 0}.inline input{flex:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.row{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:6px 0;cursor:pointer}
+.row-main{flex:1;min-width:0}.row-title{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis}
+.row-sub,.small{font-size:13px;color:var(--mut)}
+.row-side{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.price{font-weight:700;font-size:17px}
+.chip{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--line);color:var(--ink);white-space:nowrap}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}.chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.info{background:var(--info-bg);color:var(--info)}
+.empty{text-align:center;color:var(--mut);padding:30px 10px}
+#scan-wrap{position:relative;border-radius:16px;overflow:hidden;background:#000;aspect-ratio:4/3;display:none;margin-top:6px}
+#scan-wrap.on{display:block}
+#video{width:100%;height:100%;object-fit:cover;display:block}
+.aim{position:absolute;left:6%;right:6%;top:30%;bottom:30%;border:2px solid rgba(255,255,255,.85);border-radius:10px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+.aim:after{content:"";position:absolute;left:4%;right:4%;top:50%;height:2px;background:#ef4444;animation:sc 1.6s ease-in-out infinite}
+@keyframes sc{50%{opacity:.25}}
+#btn-torch{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.5);color:#fff;border:0}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:20;align-items:flex-end}
+#modal.open{display:flex}
+.sheet{background:var(--bg);width:100%;max-height:92vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;animation:up .18s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:.5}}
+.sheet-top{display:flex;justify-content:flex-end;padding:8px 10px 0}
+#modal-close{border:0;background:var(--line);color:var(--ink);width:32px;height:32px;border-radius:50%;font-size:16px}
+#modal-body{overflow:auto;padding:0 16px calc(24px + env(safe-area-inset-bottom))}
+.title-input{font-size:19px;font-weight:700;border:0;background:transparent;padding:4px 0}
+.cats{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.cat{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:7px 12px;font-size:14px}
+.cat.sel{background:var(--pri);color:var(--pri-ink);border-color:var(--pri)}
+.cat small{opacity:.75}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:3px 0}.kv.small{font-size:13px;color:var(--mut)}
+.suggest{background:var(--card);border:2px solid var(--pri);border-radius:14px;padding:12px;text-align:center;margin:12px 0}
+.suggest .big{font-size:40px;font-weight:800;color:var(--pri);letter-spacing:-1px}
+.up{color:var(--danger)}.down{color:var(--ok)}.warn-text{color:var(--warn);margin-top:6px}
+.code{font:600 22px ui-monospace,Menlo,monospace;margin:6px 0;letter-spacing:1px}
+details{margin:14px 0}summary{font-weight:600;cursor:pointer}
+pre.msg{white-space:pre-wrap;font:inherit;margin:8px 0}
+.toggle{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--ink)}.toggle input{width:auto}
+.cat-row .pct{max-width:70px;flex:0 0 70px}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#111827;color:#fff;padding:10px 16px;border-radius:12px;opacity:0;transition:.2s;z-index:30;pointer-events:none;max-width:90%;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%)}
+.filebtn{position:relative;overflow:hidden;display:inline-block}.filebtn input{position:absolute;inset:0;opacity:0}
+</style>
+</head>
+<body>
+<header id="hdr">Cenownik</header>
+<main>
+  <section class="tab" id="tab-scan">
+    <div class="btns"><button class="btn primary" id="btn-cam" style="flex:1">Włącz aparat</button></div>
+    <div id="scan-wrap"><video id="video" playsinline muted></video><div class="aim"></div><button class="btn small" id="btn-torch" style="display:none">🔦</button></div>
+    <form id="manual-form" class="inline"><input id="manual-code" placeholder="Wpisz kod EAN lub nazwę" inputmode="text" autocomplete="off" enterkeyhint="search"><button class="btn">Szukaj</button></form>
+    <div class="small" style="padding:0 4px">Trzymaj kod poziomo w ramce, ok. 10–15 cm od aparatu. Czytnik Bluetooth też zadziała – wpisze kod w pole powyżej.</div>
+    <div id="recent"></div>
+  </section>
+
+  <section class="tab" id="tab-deliveries">
+    <div class="card">
+      <b>Wczytaj fakturę</b>
+      <div class="small">Plik XML faktury z KSeF (np. pobrany z Aplikacji Podatnika KSeF lub od księgowej). Można wybrać kilka naraz. Obsługiwany jest też CSV.</div>
+      <div class="btns"><span class="btn primary filebtn">📄 Wybierz pliki<input type="file" id="file-input" multiple accept=".xml,.csv,.txt,text/xml,application/xml,text/csv"></span></div>
+    </div>
+    <h3>Dostawy</h3>
+    <div id="invoice-list"></div>
+  </section>
+
+  <section class="tab" id="tab-products">
+    <div class="inline"><input id="prod-search" placeholder="Szukaj: nazwa, EAN, indeks" autocomplete="off">
+      <select id="prod-filter" style="max-width:130px"><option value="all">Wszystkie</option><option value="open">Do decyzji</option><option value="noean">Bez EAN</option></select></div>
+    <div class="small" id="prod-count" style="padding:0 4px"></div>
+    <div id="prod-list"></div>
+  </section>
+
+  <section class="tab" id="tab-settings">
+    <div class="card">
+      <b>Kategorie i narzuty</b>
+      <div class="small">★ = kategoria domyślna dla nowych produktów. Kategorię każdego produktu możesz zmienić na jego karcie – aplikacja ją zapamięta.</div>
+      <div id="set-cats"></div>
+      <button class="btn small" id="add-cat">+ Dodaj kategorię</button>
+    </div>
+    <div class="card">
+      <b>Liczenie ceny</b>
+      <label>Sposób<select id="set-mode"><option value="narzut">Narzut: cena zakupu brutto + X%</option><option value="marza">Marża: X% ceny sprzedaży</option></select></label>
+      <div class="grid2">
+        <label>Zaokrąglaj do<select id="set-step"><option value="0.01">1 gr</option><option value="0.05">5 gr</option><option value="0.1">10 gr</option><option value="0.5">50 gr</option><option value="1">1 zł</option></select></label>
+        <label>W górę od reszty (zł)<input id="set-thr" inputmode="decimal"></label>
+      </div>
+      <label>Końcówka<select id="set-end"><option value="0">pełna (3,50)</option><option value="1">minus 1 gr (3,49)</option><option value="5">minus 5 gr (3,45)</option></select></label>
+      <div class="small" id="set-example" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <b>Dane</b>
+      <div class="small">Wszystko jest zapisane tylko na tym telefonie. Rób co jakiś czas kopię (np. do iCloud Drive / Plików).</div>
+      <div class="btns">
+        <button class="btn" id="bk-export">💾 Zapisz kopię</button>
+        <span class="btn filebtn">📂 Przywróć kopię<input type="file" id="bk-import" accept=".json,application/json"></span>
+      </div>
+      <div class="btns"><button class="btn" id="demo">Wczytaj przykładową fakturę</button><button class="btn danger" id="wipe">Wyczyść dane</button></div>
+    </div>
+  </section>
+</main>
+
+<nav>
+  <button data-tab="scan"><span>▦</span>Skanuj</button>
+  <button data-tab="deliveries"><span>🚚</span>Dostawy</button>
+  <button data-tab="products"><span>☰</span>Produkty</button>
+  <button data-tab="settings"><span>⚙︎</span>Ustawienia</button>
+</nav>
+
+<div id="modal"><div class="sheet"><div class="sheet-top"><button id="modal-close" aria-label="Zamknij">✕</button></div><div id="modal-body"></div></div></div>
+<div id="toast"></div>
+
+<script>
+// Dekoder EAN-13 / EAN-8 / UPC-A z linii pikseli (skala szarości).
+// Działa bez zewnętrznych bibliotek.
+const EAN = (() => {
+  const L = ["3211","2221","2122","1411","1132","1231","1114","1312","1213","3112"].map(s => s.split("").map(Number));
+  const G = L.map(p => p.slice().reverse());
+  const PARITY = ["LLLLLL","LLGLGG","LLGGLG","LLGGGL","LGLLGG","LGGLLG","LGGGLL","LGLGLG","LGLGGL","LGGLGL"];
+
+  function checksumOk(d) {
+    const n = d.length; let s = 0;
+    for (let i = 0; i < n - 1; i++) {
+      const w = ((n - 1 - i) % 2 === 1) ? 3 : 1;
+      s += d[i] * w;
+    }
+    return (10 - (s % 10)) % 10 === d[n - 1];
+  }
+
+  // dekodowanie po odległościach krawędź-krawędź (odporne na rozlanie tuszu / prześwietlenie)
+  const EDGE = { L: {}, G: {} };
+  [["L", L], ["G", G]].forEach(([name, set]) => set.forEach((p, d) => {
+    const k = (p[0] + p[1]) + "," + (p[1] + p[2]);
+    (EDGE[name][k] = EDGE[name][k] || []).push(d);
+  }));
+  // r: 4 szerokości; barsOdd: true gdy kreski to r[1], r[3] (lewa połowa), false gdy r[0], r[2] (prawa)
+  function matchDigit(r, allowG, barsOdd) {
+    const T = r[0] + r[1] + r[2] + r[3];
+    if (T <= 0) return null;
+    const u = T / 7;
+    const e1 = (r[0] + r[1]) / u, e2 = (r[1] + r[2]) / u;
+    const i1 = Math.round(e1), i2 = Math.round(e2);
+    const err = Math.abs(e1 - i1) + Math.abs(e2 - i2);
+    const key = i1 + "," + i2;
+    const sets = allowG ? ["L", "G"] : ["L"];
+    for (const name of sets) {
+      const cands = EDGE[name][key];
+      if (!cands) continue;
+      let digit = cands[0];
+      if (cands.length > 1) {
+        const bars = barsOdd ? (r[1] + r[3]) / u : (r[0] + r[2]) / u;
+        let bestD = Infinity;
+        for (const d of cands) {
+          const p = (name === "L" ? L : G)[d];
+          const pb = barsOdd ? p[1] + p[3] : p[0] + p[2];
+          const dd = Math.abs(bars - pb);
+          if (dd < bestD) { bestD = dd; digit = d; }
+        }
+      }
+      return { digit, set: name, err };
+    }
+    return null;
+  }
+
+  function runsFromLine(px) {
+    const n = px.length;
+    if (n < 40) return null;
+    // wygładzenie
+    const s = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const a = px[Math.max(0, i - 1)], b = px[i], c = px[Math.min(n - 1, i + 1)];
+      s[i] = (a + 2 * b + c) / 4;
+    }
+    // lokalny próg: średnia z min/max w oknie
+    const w = Math.max(8, Math.round(n / 14));
+    const bin = new Uint8Array(n);
+    // prefix sums do średniej
+    const pre = new Float64Array(n + 1);
+    for (let i = 0; i < n; i++) pre[i + 1] = pre[i] + s[i];
+    let gmin = 255, gmax = 0;
+    for (let i = 0; i < n; i++) { if (s[i] < gmin) gmin = s[i]; if (s[i] > gmax) gmax = s[i]; }
+    if (gmax - gmin < 30) return null;
+    const minContrast = (gmax - gmin) * 0.12;
+    for (let i = 0; i < n; i++) {
+      const a = Math.max(0, i - w), b = Math.min(n, i + w + 1);
+      let mean = (pre[b] - pre[a]) / (b - a);
+      // w jednolitych obszarach (cicha strefa) traktuj jako jasne
+      let lmin = 255, lmax = 0;
+      for (let j = a; j < b; j += 2) { const v = s[j]; if (v < lmin) lmin = v; if (v > lmax) lmax = v; }
+      if (lmax - lmin < minContrast) bin[i] = s[i] < (gmin + gmax) / 2 ? 1 : 0;
+      else bin[i] = s[i] < (lmin + lmax) / 2 ? 1 : 0; // 1 = ciemny (kreska)
+    }
+    // run-length z sub-pikselową korektą krawędzi
+    const runs = []; const colors = [];
+    let start = 0;
+    for (let i = 1; i <= n; i++) {
+      if (i === n || bin[i] !== bin[i - 1]) {
+        runs.push(i - start); colors.push(bin[i - 1]); start = i;
+      }
+    }
+    return { runs, colors };
+  }
+
+  // alternatywa: krawędzie z gradientu (lepsza przy rozmyciu)
+  function runsFromEdges(px) {
+    const n = px.length;
+    const s = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      let a = 0, w = 0;
+      for (let k = -2; k <= 2; k++) { const j = Math.min(n - 1, Math.max(0, i + k)); const ww = 3 - Math.abs(k); a += px[j] * ww; w += ww; }
+      s[i] = a / w;
+    }
+    const g = new Float32Array(n);
+    for (let i = 1; i < n - 1; i++) g[i] = (s[i + 1] - s[i - 1]) / 2;
+    let gmax = 0; for (let i = 0; i < n; i++) gmax = Math.max(gmax, Math.abs(g[i]));
+    if (gmax < 4) return null;
+    const thr = gmax * 0.08;
+    const edges = []; // {pos, sign, mag}
+    for (let i = 2; i < n - 2; i++) {
+      const v = g[i], av = Math.abs(v);
+      if (av < thr) continue;
+      if (av >= Math.abs(g[i - 1]) && av > Math.abs(g[i + 1]) && Math.sign(v) === Math.sign(g[i - 1] || v)) {
+        const a = Math.abs(g[i - 1]), c = Math.abs(g[i + 1]);
+        const den = a - 2 * av + c;
+        const off = den !== 0 ? 0.5 * (a - c) / den : 0;
+        const e = { pos: i + off, sign: v < 0 ? -1 : 1, mag: av };
+        const last = edges[edges.length - 1];
+        if (last && last.sign === e.sign) { if (e.mag > last.mag) edges[edges.length - 1] = e; }
+        else edges.push(e);
+      }
+    }
+    if (edges.length < 20) return null;
+    const runs = [], colors = [];
+    // przed pierwszą krawędzią
+    runs.push(edges[0].pos); colors.push(edges[0].sign < 0 ? 0 : 1);
+    for (let k = 1; k < edges.length; k++) {
+      runs.push(edges[k].pos - edges[k - 1].pos);
+      colors.push(edges[k - 1].sign < 0 ? 1 : 0); // po spadku jasności = kreska
+    }
+    runs.push(n - edges[edges.length - 1].pos); colors.push(edges[edges.length - 1].sign < 0 ? 1 : 0);
+    return { runs, colors };
+  }
+
+  function tryDecodeRuns(runs, colors) {
+    const out = [];
+    for (let i = 1; i < runs.length - 42; i++) {
+      if (colors[i] !== 1) continue;
+      const g = runs[i] + runs[i + 1] + runs[i + 2];
+      const m = g / 3;
+      if (runs[i] > 2.4 * m || runs[i + 1] > 2.4 * m || runs[i + 2] > 2.4 * m) continue;
+      if (runs[i - 1] < 2.5 * m && i - 1 > 0) continue; // cicha strefa
+      const r = decodeAt(runs, i, m, 6) || decodeAt(runs, i, m, 4);
+      if (r) out.push(r);
+    }
+    return out;
+  }
+
+  function decodeAt(runs, i, m, half) {
+    const need = 3 + half * 4 + 5 + half * 4 + 3;
+    if (i + need > runs.length) return null;
+    // korekta rozlania: we wzorcach strażników kreski i przerwy mają po 1 module
+    const mp = i + 3 + half * 4, ep = mp + 5 + half * 4;
+    const gb = [runs[i], runs[i + 2], runs[mp + 1], runs[mp + 3], runs[ep], runs[ep + 2]];
+    const gs = [runs[i + 1], runs[mp], runs[mp + 2], runs[mp + 4], runs[ep + 1]];
+    const delta = (gb.reduce((a, b) => a + b, 0) / gb.length - gs.reduce((a, b) => a + b, 0) / gs.length) / 2;
+    const unit = (gb.reduce((a, b) => a + b, 0) + gs.reduce((a, b) => a + b, 0)) / 11;
+    if (Math.abs(delta) > unit * 0.7) return null;
+    const fix = (r, barsOdd) => r.map((v, k) => (((k % 2 === 1) === barsOdd) ? v - delta : v + delta));
+    let p = i + 3;
+    const left = [], sets = [];
+    let errSum = 0;
+    for (let k = 0; k < half; k++) {
+      const r = [runs[p], runs[p + 1], runs[p + 2], runs[p + 3]];
+      const T = r[0] + r[1] + r[2] + r[3];
+      if (T < 7 * m * 0.6 || T > 7 * m * 1.5) return null;
+      const md = matchDigit(fix(r, true), half === 6, true);
+      if (!md || md.err > 0.95) return null;
+      left.push(md.digit); sets.push(md.set); errSum += md.err;
+      p += 4;
+    }
+    // środkowy wzorzec 5 modułów
+    const mid = runs[p] + runs[p + 1] + runs[p + 2] + runs[p + 3] + runs[p + 4];
+    if (mid < 5 * m * 0.55 || mid > 5 * m * 1.6) return null;
+    for (let k = 0; k < 5; k++) if (runs[p + k] > (mid / 5) * 2.6) return null;
+    p += 5;
+    const right = [];
+    for (let k = 0; k < half; k++) {
+      const r = [runs[p], runs[p + 1], runs[p + 2], runs[p + 3]];
+      const T = r[0] + r[1] + r[2] + r[3];
+      if (T < 7 * m * 0.6 || T > 7 * m * 1.5) return null;
+      const md = matchDigit(fix(r, false), false, false);
+      if (!md || md.err > 0.95) return null;
+      right.push(md.digit); errSum += md.err;
+      p += 4;
+    }
+    const end = runs[p] + runs[p + 1] + runs[p + 2];
+    if (end < 3 * m * 0.5 || end > 3 * m * 1.7) return null;
+    let digits;
+    if (half === 6) {
+      const par = sets.join("");
+      const first = PARITY.indexOf(par.replace(/L/g, "L"));
+      if (first < 0) return null;
+      digits = [first, ...left, ...right];
+    } else {
+      if (sets.some(s => s !== "L")) return null;
+      digits = [...left, ...right];
+    }
+    if (!checksumOk(digits)) return null;
+    return { code: digits.join(""), err: errSum };
+  }
+
+  // px: tablica jasności 0..255
+  function decodeLine(px) {
+    let res = [];
+    for (const rl of [runsFromLine(px), runsFromEdges(px)]) {
+      if (!rl) continue;
+      res = res.concat(tryDecodeRuns(rl.runs, rl.colors));
+      res = res.concat(tryDecodeRuns(rl.runs.slice().reverse(), rl.colors.slice().reverse()));
+      if (res.length) break;
+    }
+    return res;
+  }
+
+  // imageData z canvasa; skanuje kilka poziomych linii
+  function decodeImageData(img, lines = 21) {
+    const { width, height, data } = img;
+    const votes = {};
+    const row = new Float32Array(width);
+    for (let l = 0; l < lines; l++) {
+      const y = Math.round(height * (0.15 + 0.7 * (l / (lines - 1))));
+      const off = y * width * 4;
+      for (let x = 0; x < width; x++) {
+        const o = off + x * 4;
+        row[x] = 0.299 * data[o] + 0.587 * data[o + 1] + 0.114 * data[o + 2];
+      }
+      for (const r of decodeLine(row)) votes[r.code] = (votes[r.code] || 0) + 1;
+    }
+    let best = null;
+    for (const c in votes) if (!best || votes[c] > votes[best]) best = c;
+    return best ? { code: best, votes: votes[best] } : null;
+  }
+
+  return { decodeLine, decodeImageData, checksumOk };
+})();
+
+
+// Logika cen, kategorii i importu faktur (bez UI)
+const Core = (() => {
+  const DEFAULT_SETTINGS = {
+    categories: [
+      { id: "spozywka", name: "Spożywka", margin: 34 },
+      { id: "alkohol", name: "Alkohol", margin: 25 },
+      { id: "warzywa", name: "Warzywa i owoce", margin: 40 },
+      { id: "chemia", name: "Chemia i inne", margin: 30 },
+      { id: "papierosy", name: "Papierosy (cena stała)", margin: 0 }
+    ],
+    defaultCategory: "spozywka",
+    marginMode: "narzut",       // "narzut" = cena zakupu brutto + X%, "marza" = X% ceny sprzedaży
+    roundStep: 0.10,            // zaokrąglanie do pełnych 10 gr (3.50, 5.70 ...)
+    roundThreshold: 0.03,       // od ilu groszy reszty zaokrąglać w górę
+    ending: 0,                  // odjąć grosze od wyniku (np. 1 → 3.49 zamiast 3.50)
+    changeTolerance: 0.00       // różnica ceny, poniżej której nie proponujemy zmiany
+  };
+
+  const KEYWORDS = {
+    alkohol: ["piwo", "wódka", "wodka", "wino ", "whisky", "whiskey", "likier", "cydr", "brandy", " rum ", "gin ", "nalewka", "szampan", "prosecco", "tequila", "koniak", "cognac", "vodka", "bourbon", "porter", "lager", "radler", "aperitif", "martini", "% alk", "spirytus", "żubrówka", "soplica", "żołądkowa", "tyskie", "żywiec", "lech ", "okocim", "warka", "harnaś", "perła", "kasztelan", "carlsberg", "heineken", "desperados", "somersby", "kozel", "łomża", "wyborowa", "absolwent", "finlandia", "stock "],
+    warzywa: ["ziemniak", "marchew", "cebula", "pomidor", "ogórek", "ogorek", "jabłk", "jablk", "banan", "kapusta", "sałata", "salata", "papryka", "pietruszk", "czosnek", "cytryn", "pomarańcz", "pomarancz", "mandaryn", "grejpfrut", "gruszk", "winogron", "burak", " por ", "seler", "kalafior", "brokuł", "brokul", "pieczark", "rzodkiew", "koper", "natka", "kiwi", "truskawk", "śliwk", "sliwk", "arbuz", "melon", "awokado", "ananas", "cukinia", "bakłażan", "dynia", "szczypior", "limonk", "nektaryn", "brzoskwin", "borówk", "malin", "czereśn", "wiśni", "rabarbar", "kalarep", "rukola", "szpinak", "fasolka szparag"],
+    chemia: ["proszek do", "płyn do", "plyn do", "papier toal", "ręcznik pap", "recznik pap", "szampon", "mydło", "mydlo", "żel pod", "zel pod", "pasta do zęb", "dezodorant", "domestos", "ludwik", "worki na śmie", "gąbk", "chusteczk", "pieluch", "podpask", "kapsułki do", "tabletki do zmyw", "odplamiacz", "płukank", "baterie", "zapałki", "zapalniczk"],
+    papierosy: ["papierosy", "l&m", "marlboro", "chesterfield", "camel ", "pall mall", "winston", "tytoń", "tyton", "iqos", "heets", "terea", "glo "]
+  };
+
+  function guessCategory(name, vat, settings) {
+    const n = " " + (name || "").toLowerCase() + " ";
+    const has = id => settings.categories.some(c => c.id === id);
+    for (const id of ["papierosy", "alkohol", "warzywa", "chemia"]) {
+      if (has(id) && KEYWORDS[id].some(k => n.includes(k))) return id;
+    }
+    return settings.defaultCategory;
+  }
+
+  function parseNum(v) {
+    if (v === null || v === undefined) return NaN;
+    if (typeof v === "number") return v;
+    let s = String(v).trim().replace(/\s| /g, "");
+    if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)) s = s.replace(/\./g, "");
+    s = s.replace(",", ".");
+    return s === "" ? NaN : Number(s);
+  }
+
+  function vatRate(v) {
+    const n = parseNum(v);
+    return isFinite(n) ? n : 0; // "zw", "np", "oo" → 0
+  }
+
+  const toG = x => Math.round(x * 100);
+
+  function roundPrice(raw, settings) {
+    const stepG = Math.max(1, toG(settings.roundStep));
+    const thrG = Math.max(0, toG(settings.roundThreshold));
+    const rawG = Math.round(raw * 10000) / 100; // grosze z ułamkiem
+    const base = Math.floor(rawG / stepG + 1e-9) * stepG;
+    const rem = rawG - base;
+    let g = rem < thrG - 1e-6 ? base : (rem < 1e-6 ? base : base + stepG);
+    g -= Math.round(settings.ending || 0);
+    return Math.max(0.01, g / 100);
+  }
+
+  function marginFor(product, settings) {
+    if (product && product.marginOverride !== null && product.marginOverride !== undefined && product.marginOverride !== "") return Number(product.marginOverride);
+    const cat = settings.categories.find(c => c.id === (product && product.category)) || settings.categories.find(c => c.id === settings.defaultCategory);
+    return cat ? Number(cat.margin) : 0;
+  }
+
+  // koszt brutto jednej sztuki na półce
+  function unitCost(product) {
+    if (!product || !product.lastCost) return null;
+    const pack = Number(product.packQty) || 1;
+    return product.lastCost.gross / pack;
+  }
+
+  function suggestedPrice(product, settings) {
+    const cost = unitCost(product);
+    if (cost === null || !isFinite(cost)) return null;
+    const m = marginFor(product, settings) / 100;
+    let raw;
+    if (settings.marginMode === "marza") raw = m >= 0.99 ? cost * 100 : cost / (1 - m);
+    else raw = cost * (1 + m);
+    const p = roundPrice(raw, settings);
+    return { price: p, raw, cost, margin: m * 100 };
+  }
+
+  // ---------- KSeF FA(2)/FA(3) XML ----------
+  function kids(el, name) { return Array.from(el.children).filter(c => c.localName === name); }
+  function kid(el, name) { return el ? kids(el, name)[0] || null : null; }
+  function txt(el, name) { const k = kid(el, name); return k ? k.textContent.trim() : ""; }
+  function deep(el, name) { return el ? el.getElementsByTagNameNS("*", name)[0] || null : null; }
+
+  function parseKsefXml(xmlText, DP) {
+    const doc = new (DP || DOMParser)().parseFromString(xmlText, "application/xml");
+    if (doc.getElementsByTagName("parsererror").length) throw new Error("Plik nie jest poprawnym XML");
+    const root = doc.documentElement;
+    if (!root || root.localName !== "Faktura") throw new Error("To nie jest faktura KSeF (brak elementu Faktura)");
+    const fa = kid(root, "Fa");
+    if (!fa) throw new Error("Brak sekcji Fa w fakturze");
+    const p1 = kid(root, "Podmiot1");
+    const seller = deep(p1, "Nazwa") ? deep(p1, "Nazwa").textContent.trim() : "";
+    const sellerNip = deep(p1, "NIP") ? deep(p1, "NIP").textContent.trim() : "";
+    const kind = txt(fa, "RodzajFaktury") || "VAT";
+    const number = txt(fa, "P_2");
+    const date = txt(fa, "P_1");
+    const items = [];
+    for (const w of kids(fa, "FaWiersz")) {
+      if (txt(w, "StanPrzed") === "1") continue;
+      const name = txt(w, "P_7");
+      const qty = parseNum(txt(w, "P_8B"));
+      const unit = txt(w, "P_8A");
+      const vat = vatRate(txt(w, "P_12"));
+      const netUnit = parseNum(txt(w, "P_9A"));
+      const grossUnit = parseNum(txt(w, "P_9B"));
+      const netVal = parseNum(txt(w, "P_11"));
+      const grossVal = parseNum(txt(w, "P_11A"));
+      let net = NaN, gross = NaN;
+      // wartość / ilość uwzględnia rabaty z wiersza
+      if (isFinite(netVal) && isFinite(qty) && qty !== 0) net = netVal / qty;
+      else if (isFinite(netUnit)) net = netUnit;
+      if (isFinite(grossVal) && isFinite(qty) && qty !== 0) gross = grossVal / qty;
+      else if (isFinite(grossUnit)) gross = grossUnit;
+      if (!isFinite(gross) && isFinite(net)) gross = net * (1 + vat / 100);
+      if (!isFinite(net) && isFinite(gross)) net = gross / (1 + vat / 100);
+      if (!isFinite(gross)) continue;
+      items.push({
+        name, indeks: txt(w, "Indeks"), gtin: txt(w, "GTIN").replace(/\D/g, ""),
+        unit, qty: isFinite(qty) ? qty : 1, vat, net, gross
+      });
+    }
+    return { number, date, seller, sellerNip, kind, items, format: "KSeF" };
+  }
+
+  // ---------- CSV (awaryjnie, gdy hurtownia daje eksport) ----------
+  function parseCsv(text) {
+    const first = text.split(/\r?\n/)[0] || "";
+    const sep = [";", "\t", ","].map(s => [s, first.split(s).length]).sort((a, b) => b[1] - a[1])[0][0];
+    const rows = [];
+    let cur = [], field = "", q = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (q) { if (ch === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; } else field += ch; }
+      else if (ch === '"') q = true;
+      else if (ch === sep) { cur.push(field); field = ""; }
+      else if (ch === "\n" || ch === "\r") { if (ch === "\r" && text[i + 1] === "\n") i++; cur.push(field); rows.push(cur); cur = []; field = ""; }
+      else field += ch;
+    }
+    if (field !== "" || cur.length) { cur.push(field); rows.push(cur); }
+    const head = rows.shift().map(h => h.toLowerCase().trim());
+    const find = (...keys) => head.findIndex(h => keys.some(k => h.includes(k)));
+    const iName = find("nazwa", "towar", "opis");
+    const iEan = find("ean", "gtin", "kod kresk");
+    const iIdx = find("indeks", "index", "kod tow", "symbol");
+    const iQty = find("ilość", "ilosc", "ilo");
+    const iUnit = find("j.m", "jm", "jedn");
+    const iVat = find("vat", "stawka");
+    const iGrossU = find("cena brutto", "cena jedn. brutto", "brutto/szt");
+    const iNetU = find("cena netto", "cena jedn. netto", "cena jedn", "netto/szt");
+    const iNetV = find("wartość netto", "wartosc netto");
+    const iGrossV = find("wartość brutto", "wartosc brutto");
+    if (iName < 0) throw new Error("CSV: brak kolumny z nazwą towaru");
+    const items = [];
+    for (const r of rows) {
+      if (!r[iName]) continue;
+      const qty = iQty >= 0 ? parseNum(r[iQty]) : 1;
+      const vat = iVat >= 0 ? vatRate(r[iVat]) : 0;
+      let gross = NaN, net = NaN;
+      if (iGrossV >= 0 && qty) gross = parseNum(r[iGrossV]) / qty;
+      if (!isFinite(gross) && iGrossU >= 0) gross = parseNum(r[iGrossU]);
+      if (iNetV >= 0 && qty) net = parseNum(r[iNetV]) / qty;
+      if (!isFinite(net) && iNetU >= 0) net = parseNum(r[iNetU]);
+      if (!isFinite(gross) && isFinite(net)) gross = net * (1 + vat / 100);
+      if (!isFinite(net) && isFinite(gross)) net = gross / (1 + vat / 100);
+      if (!isFinite(gross)) continue;
+      items.push({ name: r[iName].trim(), gtin: iEan >= 0 ? String(r[iEan]).replace(/\D/g, "") : "", indeks: iIdx >= 0 ? String(r[iIdx]).trim() : "",
+        unit: iUnit >= 0 ? r[iUnit] : "", qty: isFinite(qty) ? qty : 1, vat, net, gross });
+    }
+    return { number: "", date: new Date().toISOString().slice(0, 10), seller: "", kind: "VAT", items, format: "CSV" };
+  }
+
+  function fmt(x) { return x === null || x === undefined || !isFinite(x) ? "—" : x.toFixed(2).replace(".", ","); }
+
+  return { DEFAULT_SETTINGS, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, parseKsefXml, parseCsv, fmt };
+})();
+
+
+// ===================== Baza danych (IndexedDB) =====================
+const DB = (() => {
+  let db;
+  function open() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open("cenownik", 1);
+      r.onupgradeneeded = () => {
+        const d = r.result;
+        d.createObjectStore("products", { keyPath: "id" });
+        d.createObjectStore("invoices", { keyPath: "id" });
+        d.createObjectStore("kv", { keyPath: "k" });
+      };
+      r.onsuccess = () => { db = r.result; res(); };
+      r.onerror = () => rej(r.error);
+    });
+  }
+  function tx(store, mode, fn) {
+    return new Promise((res, rej) => {
+      const t = db.transaction(store, mode);
+      const s = t.objectStore(store);
+      const out = fn(s);
+      t.oncomplete = () => res(out && out.result !== undefined ? out.result : out);
+      t.onerror = () => rej(t.error);
+    });
+  }
+  const all = store => new Promise((res, rej) => {
+    const r = db.transaction(store).objectStore(store).getAll();
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+  const put = (store, obj) => tx(store, "readwrite", s => { s.put(obj); });
+  const putMany = (store, arr) => tx(store, "readwrite", s => { arr.forEach(o => s.put(o)); });
+  const del = (store, key) => tx(store, "readwrite", s => { s.delete(key); });
+  const clear = store => tx(store, "readwrite", s => { s.clear(); });
+  return { open, all, put, putMany, del, clear };
+})();
+
+// ===================== Stan =====================
+const S = { products: new Map(), invoices: [], settings: null, recent: [] };
+const $ = sel => document.querySelector(sel);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const F = Core.fmt;
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const today = () => new Date().toISOString().slice(0, 10);
+
+function normCode(c) {
+  c = String(c || "").replace(/\D/g, "");
+  if (c.length === 14 && c[0] === "0") c = c.slice(1);
+  if (c.length === 12) c = "0" + c;
+  return c;
+}
+
+async function saveSettings() { await DB.put("kv", { k: "settings", v: S.settings }); }
+async function saveProduct(p) { S.products.set(p.id, p); await DB.put("products", p); }
+
+function toast(msg, ms = 2600) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), ms);
+}
+
+function beep() {
+  try {
+    const A = window.AudioContext || window.webkitAudioContext;
+    beep.ctx = beep.ctx || new A();
+    const o = beep.ctx.createOscillator(), g = beep.ctx.createGain();
+    o.frequency.value = 1500; g.gain.value = 0.08;
+    o.connect(g); g.connect(beep.ctx.destination); o.start(); o.stop(beep.ctx.currentTime + 0.09);
+  } catch (e) {}
+}
+
+// ===================== Produkty i decyzje =====================
+function findByCode(code) {
+  code = normCode(code);
+  if (!code) return null;
+  for (const p of S.products.values()) if ((p.eans || []).includes(code)) return p;
+  return null;
+}
+function needsDecision(p) { return !!(p.lastCost && p.lastCost.invoiceId && p.decidedFor !== p.lastCost.invoiceId); }
+function catName(id) { const c = S.settings.categories.find(c => c.id === id); return c ? c.name : "—"; }
+function prevCost(p) {
+  const h = (p.costHistory || []);
+  return h.length >= 2 ? h[h.length - 2] : null;
+}
+
+async function decide(p, price, action) {
+  const prev = p.shelfPrice ?? null;
+  p.priceHistory = p.priceHistory || [];
+  p.priceHistory.push({ date: today(), price, prev, action, invoiceId: p.lastCost ? p.lastCost.invoiceId : null, cost: Core.unitCost(p) });
+  p.shelfPrice = price;
+  if (p.lastCost) p.decidedFor = p.lastCost.invoiceId;
+  await saveProduct(p);
+}
+
+// ===================== Import faktur =====================
+async function importFiles(files) {
+  let added = 0, lines = 0, skipped = [];
+  for (const f of files) {
+    try {
+      const text = await f.text();
+      const isXml = /^\s*<\?xml|^\s*<Faktura|<Faktura[\s>]/.test(text.slice(0, 2000)) || /\.xml$/i.test(f.name);
+      const inv = isXml ? Core.parseKsefXml(text) : Core.parseCsv(text);
+      if (/^KOR/i.test(inv.kind)) { skipped.push(f.name + " (korekta – pominięta)"); continue; }
+      if (!inv.number) inv.number = f.name.replace(/\.[^.]+$/, "");
+      if (S.invoices.some(i => i.number === inv.number && i.seller === inv.seller)) { skipped.push(inv.number + " (już wczytana)"); continue; }
+      const r = await applyInvoice(inv, f.name);
+      added++; lines += r;
+    } catch (e) {
+      skipped.push(f.name + ": " + e.message);
+    }
+  }
+  renderAll();
+  let msg = `Wczytano faktur: ${added}, pozycji: ${lines}.`;
+  if (skipped.length) msg += "\nPominięto:\n• " + skipped.join("\n• ");
+  alertBox(msg);
+}
+
+async function applyInvoice(inv, fileName) {
+  const id = uid();
+  const record = { id, number: inv.number, date: inv.date || today(), seller: inv.seller, format: inv.format, file: fileName, importedAt: new Date().toISOString(), lines: [] };
+  const changed = new Map();
+  for (const it of inv.items) {
+    if (/kaucj|opakowanie zwrotne|transport|dostawa/i.test(it.name)) continue;
+    const gtin = normCode(it.gtin);
+    let p = null;
+    if (gtin) p = findByCode(gtin);
+    if (!p && it.indeks) for (const q of S.products.values()) if (q.indeks && q.indeks === it.indeks) { p = q; break; }
+    if (!p) for (const q of changed.values()) if ((gtin && q.eans.includes(gtin)) || (it.indeks && q.indeks === it.indeks)) { p = q; break; }
+    if (!p) {
+      p = { id: uid(), name: it.name, indeks: it.indeks || "", eans: [], category: Core.guessCategory(it.name, it.vat, S.settings),
+        packQty: 1, marginOverride: null, shelfPrice: null, costHistory: [], priceHistory: [], created: today() };
+    }
+    if (gtin && !p.eans.includes(gtin)) p.eans.push(gtin);
+    if (!p.indeks && it.indeks) p.indeks = it.indeks;
+    if (it.name) p.name = p.name || it.name;
+    p.invoiceName = it.name;
+    const cost = { net: it.net, gross: it.gross, vat: it.vat, unit: it.unit, qty: it.qty, date: record.date, invoiceId: id, invoiceNo: inv.number };
+    if (p.lastCost && p.lastCost.invoiceId === id) { p.costHistory[p.costHistory.length - 1] = cost; }
+    else p.costHistory.push(cost);
+    p.lastCost = cost;
+    changed.set(p.id, p);
+    record.lines.push({ productId: p.id, name: it.name, qty: it.qty, unit: it.unit, gross: it.gross, net: it.net, vat: it.vat });
+  }
+  for (const p of changed.values()) S.products.set(p.id, p);
+  await DB.putMany("products", [...changed.values()]);
+  S.invoices.unshift(record);
+  S.invoices.sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.importedAt.localeCompare(a.importedAt));
+  await DB.put("invoices", record);
+  return record.lines.length;
+}
+
+// ===================== Widoki =====================
+function show(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.id === "tab-" + tab));
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+  if (tab !== "scan") Scanner.stop();
+  if (tab === "products") renderProducts();
+  if (tab === "deliveries") renderInvoices();
+  if (tab === "settings") renderSettings();
+}
+
+function renderAll() { renderInvoices(); renderProducts(); renderRecent(); }
+
+function priceRow(p) {
+  const sp = Core.suggestedPrice(p, S.settings);
+  const need = needsDecision(p);
+  const up = sp && p.shelfPrice != null && sp.price > p.shelfPrice + 1e-9;
+  const down = sp && p.shelfPrice != null && sp.price < p.shelfPrice - 1e-9;
+  const badge = !p.lastCost ? `<span class="chip">bez kosztu</span>`
+    : need ? (p.shelfPrice == null ? `<span class="chip warn">nowy</span>` : up ? `<span class="chip warn">▲ do decyzji</span>` : down ? `<span class="chip info">▼ do decyzji</span>` : `<span class="chip">do decyzji</span>`)
+    : `<span class="chip ok">✓</span>`;
+  return `<div class="row" data-pid="${p.id}">
+    <div class="row-main"><div class="row-title">${esc(p.name)}</div>
+    <div class="row-sub">${esc(catName(p.category))} · zakup ${F(Core.unitCost(p))} zł${p.packQty > 1 ? " (÷" + p.packQty + ")" : ""}</div></div>
+    <div class="row-side"><div class="price">${sp ? F(sp.price) : "—"}</div><div class="row-sub">półka ${p.shelfPrice != null ? F(p.shelfPrice) : "—"}</div>${badge}</div></div>`;
+}
+
+function bindRows(container) {
+  container.querySelectorAll("[data-pid]").forEach(el => el.onclick = () => openProduct(S.products.get(el.dataset.pid)));
+}
+
+function renderRecent() {
+  const box = $("#recent");
+  const items = S.recent.map(id => S.products.get(id)).filter(Boolean);
+  box.innerHTML = items.length ? `<h3>Ostatnio zeskanowane</h3>` + items.map(priceRow).join("") : "";
+  bindRows(box);
+}
+
+function renderInvoices() {
+  const box = $("#invoice-list");
+  if (!S.invoices.length) {
+    box.innerHTML = `<div class="empty">Brak wczytanych faktur.<br>Pobierz plik XML faktury z KSeF i wczytaj go przyciskiem powyżej.</div>`;
+    return;
+  }
+  box.innerHTML = S.invoices.map(inv => {
+    const ps = inv.lines.map(l => S.products.get(l.productId)).filter(Boolean);
+    const open = ps.filter(p => needsDecision(p) && p.lastCost.invoiceId === inv.id).length;
+    return `<div class="row" data-inv="${inv.id}"><div class="row-main"><div class="row-title">${esc(inv.number)}</div>
+      <div class="row-sub">${esc(inv.date)} · ${esc(inv.seller || inv.format)} · ${inv.lines.length} poz.</div></div>
+      <div class="row-side">${open ? `<span class="chip warn">${open} do decyzji</span>` : `<span class="chip ok">gotowe</span>`}</div></div>`;
+  }).join("");
+  box.querySelectorAll("[data-inv]").forEach(el => el.onclick = () => openInvoice(el.dataset.inv));
+}
+
+function openInvoice(id) {
+  const inv = S.invoices.find(i => i.id === id);
+  if (!inv) return;
+  let onlyOpen = true;
+  const draw = () => {
+    const ps = [...new Map(inv.lines.map(l => [l.productId, S.products.get(l.productId)])).values()].filter(Boolean);
+    const list = ps.filter(p => !onlyOpen || (needsDecision(p) && p.lastCost.invoiceId === inv.id));
+    const same = ps.filter(p => needsDecision(p) && p.shelfPrice != null && Core.suggestedPrice(p, S.settings)?.price === p.shelfPrice);
+    modal(`<h2>${esc(inv.number)}</h2><div class="row-sub">${esc(inv.date)} · ${esc(inv.seller || "")}</div>
+      <div class="btns">
+        <label class="toggle"><input type="checkbox" id="only-open" ${onlyOpen ? "checked" : ""}> tylko do decyzji</label>
+      </div>
+      <div class="btns">
+        ${same.length ? `<button class="btn" id="bulk-keep">Zostaw ${same.length} bez zmian ceny</button>` : ""}
+        <button class="btn" id="inv-csv">Eksport CSV</button>
+        <button class="btn danger" id="inv-del">Usuń fakturę</button>
+      </div>
+      <div id="inv-rows">${list.length ? list.map(priceRow).join("") : `<div class="empty">Wszystkie pozycje mają decyzję 👍</div>`}</div>`);
+    $("#only-open").onchange = e => { onlyOpen = e.target.checked; draw(); };
+    const bk = $("#bulk-keep");
+    if (bk) bk.onclick = async () => { for (const p of same) await decide(p, p.shelfPrice, "keep"); draw(); renderAll(); toast("Zapisano"); };
+    $("#inv-csv").onclick = () => exportInvoiceCsv(inv);
+    $("#inv-del").onclick = async () => {
+      if (!confirm("Usunąć fakturę z listy? Historia cen produktów zostaje.")) return;
+      S.invoices = S.invoices.filter(i => i.id !== inv.id); await DB.del("invoices", inv.id); closeModal(); renderAll();
+    };
+    document.querySelectorAll("#inv-rows [data-pid]").forEach(el => el.onclick = () => openProduct(S.products.get(el.dataset.pid), draw));
+  };
+  draw();
+}
+
+function exportInvoiceCsv(inv) {
+  const rows = [["Nazwa", "EAN", "Kategoria", "Zakup brutto/szt", "Proponowana", "Cena na półce", "Decyzja"]];
+  const seen = new Set();
+  for (const l of inv.lines) {
+    if (seen.has(l.productId)) continue; seen.add(l.productId);
+    const p = S.products.get(l.productId); if (!p) continue;
+    const sp = Core.suggestedPrice(p, S.settings);
+    const h = (p.priceHistory || []).filter(x => x.invoiceId === inv.id).pop();
+    rows.push([p.name, (p.eans || []).join(" "), catName(p.category), F(Core.unitCost(p)), sp ? F(sp.price) : "", p.shelfPrice != null ? F(p.shelfPrice) : "",
+      h ? (h.action === "keep" ? "bez zmian" : "zmiana z " + (h.prev != null ? F(h.prev) : "—")) : "brak"]);
+  }
+  const csv = "﻿" + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+  download(new Blob([csv], { type: "text/csv" }), `ceny_${inv.number.replace(/[^\w-]+/g, "_")}.csv`);
+}
+
+function download(blob, name) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+function renderProducts() {
+  const q = ($("#prod-search").value || "").toLowerCase().trim();
+  const filter = $("#prod-filter").value;
+  let list = [...S.products.values()];
+  if (q) list = list.filter(p => (p.name || "").toLowerCase().includes(q) || (p.eans || []).some(e => e.includes(q)) || (p.indeks || "").toLowerCase().includes(q));
+  if (filter === "open") list = list.filter(needsDecision);
+  if (filter === "noean") list = list.filter(p => !(p.eans || []).length);
+  list.sort((a, b) => (a.name || "").localeCompare(b.name || "", "pl"));
+  $("#prod-count").textContent = `${list.length} produktów`;
+  const box = $("#prod-list");
+  box.innerHTML = list.slice(0, 300).map(priceRow).join("") + (list.length > 300 ? `<div class="empty">Pokazano 300 z ${list.length} – zawęź wyszukiwanie.</div>` : "");
+  bindRows(box);
+}
+
+// ===================== Karta produktu =====================
+function openProduct(p, onClose) {
+  if (!p) return;
+  const draw = () => {
+    const s = S.settings;
+    const sp = Core.suggestedPrice(p, s);
+    const pc = prevCost(p);
+    const uc = Core.unitCost(p);
+    const pack = Number(p.packQty) || 1;
+    const prevUnit = pc ? pc.gross / pack : null;
+    const delta = pc && prevUnit ? ((uc - prevUnit) / prevUnit * 100) : null;
+    const realM = p.shelfPrice != null && uc ? (s.marginMode === "marza" ? (p.shelfPrice - uc) / p.shelfPrice * 100 : (p.shelfPrice - uc) / uc * 100) : null;
+    const need = needsDecision(p);
+    const cats = s.categories.map(c => `<button class="cat ${c.id === p.category ? "sel" : ""}" data-cat="${c.id}">${esc(c.name)} <small>${c.margin}%</small></button>`).join("");
+    modal(`
+      <input class="title-input" id="p-name" value="${esc(p.name)}">
+      <div class="row-sub">${p.eans && p.eans.length ? "EAN: " + p.eans.map(esc).join(", ") : "brak EAN – zeskanuj produkt, żeby powiązać"}${p.indeks ? " · indeks hurtowni: " + esc(p.indeks) : ""}</div>
+      ${p.invoiceName && p.invoiceName !== p.name ? `<div class="row-sub">Na fakturze: ${esc(p.invoiceName)}</div>` : ""}
+
+      <div class="cats">${cats}</div>
+
+      <div class="grid2">
+        <label>Szt. w opakowaniu z faktury<input id="p-pack" inputmode="decimal" value="${pack}"></label>
+        <label>Własny narzut % (puste = kategoria)<input id="p-mo" inputmode="decimal" value="${p.marginOverride ?? ""}"></label>
+      </div>
+
+      <div class="box">
+        ${p.lastCost ? `
+          <div class="kv"><span>Zakup (${esc(p.lastCost.date)}, ${esc(p.lastCost.invoiceNo || "")})</span><b>${F(uc)} zł brutto/szt</b></div>
+          <div class="kv small"><span>netto ${F(p.lastCost.net / pack)} · VAT ${p.lastCost.vat}% · na fakturze ${F(p.lastCost.qty)} ${esc(p.lastCost.unit || "")} po ${F(p.lastCost.gross)}</span></div>
+          ${pc ? `<div class="kv small"><span>Poprzednia dostawa ${esc(pc.date)}</span><span>${F(prevUnit)} zł ${delta !== null ? `<b class="${delta > 0 ? "up" : delta < 0 ? "down" : ""}">${delta > 0 ? "+" : ""}${delta.toFixed(1).replace(".", ",")}%</b>` : ""}</span></div>` : ""}
+        ` : `<div class="kv"><span>Brak kosztu z faktury</span></div>
+          <label>Wpisz cenę zakupu brutto/szt<input id="p-mancost" inputmode="decimal" placeholder="np. 2,61"></label>
+          <button class="btn" id="p-savecost">Zapisz koszt</button>`}
+      </div>
+
+      ${sp ? `<div class="suggest"><div class="small">Proponowana cena (${s.marginMode === "marza" ? "marża" : "narzut"} ${sp.margin}% → ${F(sp.raw)})</div><div class="big">${F(sp.price)} zł</div></div>` : ""}
+      <div class="kv"><span>Obecna cena na półce</span><b>${p.shelfPrice != null ? F(p.shelfPrice) + " zł" : "—"}</b></div>
+      ${realM !== null ? `<div class="kv small"><span>Przy obecnej cenie ${s.marginMode === "marza" ? "marża" : "narzut"}</span><span class="${realM < sp?.margin - 2 ? "up" : ""}">${realM.toFixed(1).replace(".", ",")}%</span></div>` : ""}
+
+      <div class="btns big-btns">
+        ${sp ? `<button class="btn primary" id="p-apply">${p.shelfPrice != null && sp.price === p.shelfPrice ? "Cena OK – " + F(sp.price) : "Zmień na " + F(sp.price)}</button>` : ""}
+        ${p.shelfPrice != null && (!sp || sp.price !== p.shelfPrice) ? `<button class="btn" id="p-keep">Zostaw ${F(p.shelfPrice)}</button>` : ""}
+      </div>
+      <div class="inline"><input id="p-custom" inputmode="decimal" placeholder="Obecna lub inna cena, np. 3,49"><button class="btn" id="p-setcustom">Ustaw</button></div>
+      ${need ? `<div class="row-sub warn-text">● Ta dostawa czeka na decyzję</div>` : ""}
+
+      <details><summary>Historia</summary>
+        <h4>Ceny zakupu</h4>
+        ${(p.costHistory || []).slice().reverse().map(c => `<div class="kv small"><span>${esc(c.date)} · ${esc(c.invoiceNo || "")}</span><span>${F(c.gross / pack)} zł</span></div>`).join("") || "<div class='small'>—</div>"}
+        <h4>Ceny na półce</h4>
+        ${(p.priceHistory || []).slice().reverse().map(h => `<div class="kv small"><span>${esc(h.date)} · ${h.action === "keep" ? "bez zmian" : h.action === "manual" ? "ręcznie" : "zmiana"}</span><span>${h.prev != null && h.prev !== h.price ? F(h.prev) + " → " : ""}${F(h.price)} zł</span></div>`).join("") || "<div class='small'>—</div>"}
+      </details>
+      <div class="btns"><button class="btn danger" id="p-del">Usuń produkt</button></div>
+    `, onClose);
+
+    $("#p-name").onchange = async e => { p.name = e.target.value.trim() || p.name; await saveProduct(p); renderAll(); };
+    document.querySelectorAll("[data-cat]").forEach(b => b.onclick = async () => { p.category = b.dataset.cat; await saveProduct(p); draw(); renderAll(); });
+    $("#p-pack").onchange = async e => { const v = Core.parseNum(e.target.value); p.packQty = v > 0 ? v : 1; await saveProduct(p); draw(); renderAll(); };
+    $("#p-mo").onchange = async e => { const v = Core.parseNum(e.target.value); p.marginOverride = isFinite(v) ? v : null; await saveProduct(p); draw(); renderAll(); };
+    const sc = $("#p-savecost");
+    if (sc) sc.onclick = async () => {
+      const v = Core.parseNum($("#p-mancost").value);
+      if (!(v > 0)) return toast("Podaj poprawną cenę");
+      const c = { net: v, gross: v, vat: 0, unit: "szt", qty: 1, date: today(), invoiceId: "manual-" + uid(), invoiceNo: "ręcznie" };
+      p.costHistory = p.costHistory || []; p.costHistory.push(c); p.lastCost = c; p.packQty = 1;
+      await saveProduct(p); draw(); renderAll();
+    };
+    const ap = $("#p-apply");
+    if (ap) ap.onclick = async () => { await decide(p, sp.price, sp.price === p.shelfPrice ? "keep" : "change"); toast("Cena: " + F(sp.price) + " zł"); closeModal(); renderAll(); };
+    const kp = $("#p-keep");
+    if (kp) kp.onclick = async () => { await decide(p, p.shelfPrice, "keep"); toast("Zostawiono " + F(p.shelfPrice) + " zł"); closeModal(); renderAll(); };
+    $("#p-setcustom").onclick = async () => {
+      const v = Core.parseNum($("#p-custom").value);
+      if (!(v > 0)) return toast("Podaj poprawną cenę");
+      await decide(p, Math.round(v * 100) / 100, "manual"); toast("Cena: " + F(v) + " zł"); closeModal(); renderAll();
+    };
+    $("#p-del").onclick = async () => {
+      if (!confirm("Usunąć produkt i jego historię?")) return;
+      S.products.delete(p.id); await DB.del("products", p.id); closeModal(); renderAll();
+    };
+  };
+  draw();
+}
+
+// ===================== Nieznany kod =====================
+function unknownCode(code) {
+  let q = "";
+  const draw = () => {
+    let list = [...S.products.values()].filter(p => !(p.eans || []).length);
+    if (q) list = list.filter(p => (p.name || "").toLowerCase().includes(q) || (p.invoiceName || "").toLowerCase().includes(q));
+    list.sort((a, b) => (b.lastCost?.date || "").localeCompare(a.lastCost?.date || ""));
+    $("#link-rows").innerHTML = list.slice(0, 80).map(p => `<div class="row" data-link="${p.id}"><div class="row-main"><div class="row-title">${esc(p.name)}</div>
+      <div class="row-sub">${esc(p.lastCost?.date || "")} · ${F(Core.unitCost(p))} zł</div></div><div class="row-side"><span class="chip">powiąż</span></div></div>`).join("")
+      || `<div class="empty">Brak produktów z faktur bez kodu EAN.</div>`;
+    document.querySelectorAll("[data-link]").forEach(el => el.onclick = async () => {
+      const p = S.products.get(el.dataset.link); p.eans = p.eans || []; p.eans.push(code); await saveProduct(p);
+      toast("Powiązano kod z produktem"); $("#modal")._onClose = null; closeModal(); onFound(p);
+    });
+  };
+  modal(`<h2>Nie znaleziono kodu</h2><div class="code">${esc(code)}</div>
+    <p class="small">Jeśli faktura nie zawierała kodów EAN, wybierz ten produkt z listy – aplikacja zapamięta powiązanie na zawsze.</p>
+    <input id="link-q" placeholder="Szukaj po nazwie z faktury…" autocomplete="off">
+    <div id="link-rows"></div>
+    <div class="btns"><button class="btn" id="new-manual">Dodaj nowy produkt ręcznie</button></div>`, () => Scanner.resume());
+  $("#link-q").oninput = e => { q = e.target.value.toLowerCase().trim(); draw(); };
+  $("#new-manual").onclick = async () => {
+    const name = prompt("Nazwa produktu:");
+    if (!name) return;
+    const p = { id: uid(), name, indeks: "", eans: [code], category: Core.guessCategory(name, 0, S.settings), packQty: 1, marginOverride: null, shelfPrice: null, costHistory: [], priceHistory: [], created: today() };
+    await saveProduct(p); $("#modal")._onClose = null; closeModal(); onFound(p);
+  };
+  draw();
+}
+
+function onFound(p) {
+  S.recent = [p.id, ...S.recent.filter(x => x !== p.id)].slice(0, 15);
+  renderRecent();
+  openProduct(p, () => Scanner.resume());
+}
+
+function handleCode(raw) {
+  const code = normCode(raw);
+  if (!code) return;
+  const p = findByCode(code);
+  if (p) onFound(p); else unknownCode(code);
+}
+
+// ===================== Modal / alert =====================
+function modal(html, onClose) {
+  const m = $("#modal");
+  $("#modal-body").innerHTML = html;
+  if (onClose !== undefined) m._onClose = onClose;
+  if (!m.classList.contains("open")) { m.classList.add("open"); $("#modal-body").scrollTop = 0; }
+}
+function closeModal() {
+  const m = $("#modal"); m.classList.remove("open");
+  const cb = m._onClose; m._onClose = null; if (cb) cb();
+}
+function alertBox(msg) { modal(`<pre class="msg">${esc(msg)}</pre><div class="btns"><button class="btn primary" onclick="closeModal()">OK</button></div>`, null); }
+
+// ===================== Skaner =====================
+const Scanner = (() => {
+  let lastHandled = { code: "", t: 0 };
+  let stream = null, running = false, paused = false, detector = null, last = { code: "", n: 0, t: 0 }, timer = null;
+  const video = () => $("#video");
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+  async function start() {
+    if (stream) { paused = false; return; }
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } } });
+    } catch (e) {
+      alertBox("Nie mogę włączyć aparatu: " + e.message + "\n\nAparat działa tylko, gdy aplikacja jest otwarta przez https:// (np. z GitHub Pages). Sprawdź też uprawnienia aparatu dla Safari w Ustawieniach iPhone'a.");
+      return;
+    }
+    const v = video();
+    v.srcObject = stream; v.setAttribute("playsinline", ""); v.muted = true;
+    await v.play().catch(() => {});
+    $("#scan-wrap").classList.add("on");
+    $("#btn-cam").textContent = "Wyłącz aparat";
+    try {
+      if ("BarcodeDetector" in window) {
+        const f = await BarcodeDetector.getSupportedFormats();
+        if (f.includes("ean_13")) detector = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e"].filter(x => f.includes(x)) });
+      }
+    } catch (e) { detector = null; }
+    const track = stream.getVideoTracks()[0];
+    const caps = track.getCapabilities ? track.getCapabilities() : {};
+    $("#btn-torch").style.display = caps.torch ? "" : "none";
+    running = true; paused = false; loop();
+  }
+
+  function stop() {
+    running = false; clearTimeout(timer);
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    $("#scan-wrap").classList.remove("on");
+    $("#btn-cam").textContent = "Włącz aparat";
+  }
+
+  let torchOn = false;
+  async function torch() {
+    if (!stream) return;
+    torchOn = !torchOn;
+    try { await stream.getVideoTracks()[0].applyConstraints({ advanced: [{ torch: torchOn }] }); } catch (e) { toast("Latarka niedostępna"); }
+  }
+
+  async function loop() {
+    if (!running) return;
+    if (!paused) {
+      const v = video();
+      if (v.readyState >= 2 && v.videoWidth) {
+        let code = null;
+        try {
+          if (detector) {
+            const r = await detector.detect(v);
+            if (r && r.length) code = r[0].rawValue;
+          } else {
+            // pas środkowy klatki
+            const W = v.videoWidth, H = v.videoHeight;
+            const bandH = Math.round(H * 0.4);
+            canvas.width = W; canvas.height = bandH;
+            ctx.drawImage(v, 0, Math.round((H - bandH) / 2), W, bandH, 0, 0, W, bandH);
+            const r = EAN.decodeImageData(ctx.getImageData(0, 0, W, bandH), 25);
+            if (r) code = r.votes >= 2 ? r.code : (last.code === r.code ? r.code : (last = { code: r.code, n: 1, t: Date.now() }, null));
+          }
+        } catch (e) {}
+        if (code && code === lastHandled.code && Date.now() - lastHandled.t < 3000) code = null;
+        if (code) {
+          lastHandled = { code, t: Date.now() };
+          paused = true; last = { code: "", n: 0, t: 0 };
+          beep(); if (navigator.vibrate) navigator.vibrate(60);
+          handleCode(code);
+        }
+      }
+    }
+    timer = setTimeout(loop, 60);
+  }
+
+  return { start, stop, torch, resume: () => { paused = false; lastHandled.t = Date.now(); }, isOn: () => !!stream };
+})();
+
+// ===================== Ustawienia =====================
+function renderSettings() {
+  const s = S.settings;
+  $("#set-cats").innerHTML = s.categories.map((c, i) => `<div class="inline cat-row">
+    <input data-ci="${i}" data-f="name" value="${esc(c.name)}">
+    <input data-ci="${i}" data-f="margin" inputmode="decimal" value="${c.margin}" class="pct"><span>%</span>
+    <button class="btn small ${s.defaultCategory === c.id ? "primary" : ""}" data-def="${c.id}" title="domyślna">★</button>
+    <button class="btn small danger" data-rm="${i}">✕</button></div>`).join("");
+  document.querySelectorAll("[data-ci]").forEach(inp => inp.onchange = async () => {
+    const c = s.categories[+inp.dataset.ci];
+    if (inp.dataset.f === "margin") { const v = Core.parseNum(inp.value); if (isFinite(v)) c.margin = v; }
+    else c.name = inp.value.trim() || c.name;
+    await saveSettings(); renderAll();
+  });
+  document.querySelectorAll("[data-def]").forEach(b => b.onclick = async () => { s.defaultCategory = b.dataset.def; await saveSettings(); renderSettings(); });
+  document.querySelectorAll("[data-rm]").forEach(b => b.onclick = async () => {
+    const c = s.categories[+b.dataset.rm];
+    if (s.categories.length <= 1) return;
+    if (!confirm(`Usunąć kategorię „${c.name}”? Produkty z niej przejdą do domyślnej.`)) return;
+    s.categories.splice(+b.dataset.rm, 1);
+    if (s.defaultCategory === c.id) s.defaultCategory = s.categories[0].id;
+    for (const p of S.products.values()) if (p.category === c.id) { p.category = s.defaultCategory; await saveProduct(p); }
+    await saveSettings(); renderSettings(); renderAll();
+  });
+  $("#set-mode").value = s.marginMode;
+  $("#set-step").value = String(s.roundStep);
+  $("#set-thr").value = F(s.roundThreshold);
+  $("#set-end").value = String(s.ending || 0);
+  updateExample();
+}
+function updateExample() {
+  const s = S.settings;
+  const ex = [2.61, 3.37, 4.25, 1.19].map(c => {
+    const p = { category: s.defaultCategory, lastCost: { gross: c }, packQty: 1 };
+    return `${F(c)} → <b>${F(Core.suggestedPrice(p, s).price)}</b>`;
+  }).join(" · ");
+  $("#set-example").innerHTML = `Przykład (${esc(catName(s.defaultCategory))}): ${ex}`;
+}
+
+async function backupExport() {
+  const data = { app: "cenownik", version: 1, exported: new Date().toISOString(), settings: S.settings, products: [...S.products.values()], invoices: S.invoices };
+  download(new Blob([JSON.stringify(data)], { type: "application/json" }), `cenownik_kopia_${today()}.json`);
+}
+async function backupImport(file) {
+  try {
+    const data = JSON.parse(await file.text());
+    if (data.app !== "cenownik") throw new Error("To nie jest kopia z tej aplikacji");
+    if (!confirm(`Przywrócić kopię z ${data.exported?.slice(0, 10)}? Obecne dane zostaną zastąpione.`)) return;
+    await DB.clear("products"); await DB.clear("invoices");
+    await DB.putMany("products", data.products); await DB.putMany("invoices", data.invoices);
+    S.settings = Object.assign({}, Core.DEFAULT_SETTINGS, data.settings); await saveSettings();
+    await loadAll(); renderAll(); renderSettings(); toast("Przywrócono kopię");
+  } catch (e) { alertBox("Błąd przywracania: " + e.message); }
+}
+
+async function loadAll() {
+  const [ps, invs, kv] = await Promise.all([DB.all("products"), DB.all("invoices"), DB.all("kv")]);
+  S.products = new Map(ps.map(p => [p.id, p]));
+  S.invoices = invs.sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.importedAt.localeCompare(a.importedAt));
+  const st = kv.find(x => x.k === "settings");
+  S.settings = st ? Object.assign({}, JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS)), st.v) : JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS));
+}
+
+// ===================== Start =====================
+async function init() {
+  await DB.open();
+  await loadAll();
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+
+  document.querySelectorAll("nav button").forEach(b => b.onclick = () => show(b.dataset.tab));
+  $("#modal-close").onclick = closeModal;
+  $("#modal").onclick = e => { if (e.target.id === "modal") closeModal(); };
+
+  $("#btn-cam").onclick = () => Scanner.isOn() ? Scanner.stop() : Scanner.start();
+  $("#btn-torch").onclick = () => Scanner.torch();
+  $("#manual-form").onsubmit = e => {
+    e.preventDefault();
+    const v = $("#manual-code").value.trim(); $("#manual-code").value = "";
+    if (!v) return;
+    if (/^\d{6,14}$/.test(v)) return handleCode(v);
+    $("#prod-search").value = v; show("products");
+  };
+
+  $("#file-input").onchange = e => { const f = [...e.target.files]; e.target.value = ""; if (f.length) importFiles(f); };
+  $("#prod-search").oninput = renderProducts;
+  $("#prod-filter").onchange = renderProducts;
+
+  $("#set-mode").onchange = async e => { S.settings.marginMode = e.target.value; await saveSettings(); updateExample(); renderAll(); };
+  $("#set-step").onchange = async e => { S.settings.roundStep = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
+  $("#set-thr").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v)) S.settings.roundThreshold = v; await saveSettings(); updateExample(); renderAll(); };
+  $("#set-end").onchange = async e => { S.settings.ending = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
+  $("#add-cat").onclick = async () => {
+    const name = prompt("Nazwa kategorii:"); if (!name) return;
+    const m = Core.parseNum(prompt("Narzut w %:", "30"));
+    S.settings.categories.push({ id: "c" + uid(), name, margin: isFinite(m) ? m : 30 }); await saveSettings(); renderSettings();
+  };
+  $("#bk-export").onclick = backupExport;
+  $("#bk-import").onchange = e => { const f = e.target.files[0]; e.target.value = ""; if (f) backupImport(f); };
+  $("#demo").onclick = () => importFiles([new File([DEMO_XML], "przyklad.xml", { type: "text/xml" })]);
+  $("#wipe").onclick = async () => {
+    if (!confirm("Usunąć WSZYSTKIE produkty i faktury? Zrób najpierw kopię zapasową.")) return;
+    await DB.clear("products"); await DB.clear("invoices"); await loadAll(); renderAll(); toast("Wyczyszczono");
+  };
+
+  renderAll();
+  show("scan");
+  if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+
+const DEMO_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<Faktura xmlns="http://crd.gov.pl/wzor/2025/06/25/13775/">
+ <Naglowek><KodFormularza kodSystemowy="FA (3)" wersjaSchemy="1-0E">FA</KodFormularza><WariantFormularza>3</WariantFormularza><DataWytworzeniaFa>2026-11-16T08:00:00Z</DataWytworzeniaFa></Naglowek>
+ <Podmiot1><DaneIdentyfikacyjne><NIP>0000000000</NIP><Nazwa>Hurtownia Przykładowa sp. z o.o.</Nazwa></DaneIdentyfikacyjne></Podmiot1>
+ <Podmiot2><DaneIdentyfikacyjne><NIP>1111111111</NIP><Nazwa>Sklep Spożywczy</Nazwa></DaneIdentyfikacyjne></Podmiot2>
+ <Fa><KodWaluty>PLN</KodWaluty><P_1>2026-11-16</P_1><P_2>PRZYKLAD/001/2026</P_2><P_15>0</P_15><RodzajFaktury>VAT</RodzajFaktury>
+  <FaWiersz><NrWierszaFa>1</NrWierszaFa><P_7>MLEKO UHT 3,2% 1L</P_7><Indeks>100001</Indeks><GTIN>5900000000017</GTIN><P_8A>szt</P_8A><P_8B>12</P_8B><P_9A>2.49</P_9A><P_11>29.88</P_11><P_12>5</P_12></FaWiersz>
+  <FaWiersz><NrWierszaFa>2</NrWierszaFa><P_7>PIWO JASNE PELNE 0,5L PUSZKA</P_7><Indeks>100002</Indeks><GTIN>5900000000024</GTIN><P_8A>szt</P_8A><P_8B>24</P_8B><P_9A>2.58</P_9A><P_11>61.92</P_11><P_12>23</P_12></FaWiersz>
+  <FaWiersz><NrWierszaFa>3</NrWierszaFa><P_7>ZIEMNIAKI JADALNE 2KG</P_7><Indeks>100003</Indeks><P_8A>szt</P_8A><P_8B>10</P_8B><P_9A>3.80</P_9A><P_11>38.00</P_11><P_12>5</P_12></FaWiersz>
+  <FaWiersz><NrWierszaFa>4</NrWierszaFa><P_7>MASLO EXTRA 200G</P_7><Indeks>100004</Indeks><GTIN>5900000000031</GTIN><P_8A>szt</P_8A><P_8B>20</P_8B><P_9A>5.99</P_9A><P_11>113.81</P_11><P_12>5</P_12></FaWiersz>
+  <FaWiersz><NrWierszaFa>5</NrWierszaFa><P_7>WODA MINERALNA 1,5L ZGRZEWKA 6 SZT</P_7><Indeks>100005</Indeks><GTIN>5900000000048</GTIN><P_8A>op</P_8A><P_8B>5</P_8B><P_9A>8.70</P_9A><P_11>43.50</P_11><P_12>5</P_12></FaWiersz>
+ </Fa>
+</Faktura>`;
+
+window.addEventListener("DOMContentLoaded", () => init().catch(e => alert("Błąd startu: " + e.message)));
+
+</script>
+</body>
+</html>
