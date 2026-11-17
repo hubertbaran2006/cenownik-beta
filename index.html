@@ -16,15 +16,18 @@
 try{const t=JSON.parse(localStorage.getItem("cenownik-theme")||"{}");const r=document.documentElement;r.dataset.theme=t.theme||"auto";r.dataset.density=t.density||"normal";if(t.accent){r.style.setProperty("--pri-l",t.accent[0]);r.style.setProperty("--pri-d",t.accent[1]);}}catch(e){}
 </script>
 <style>
-:root{--pri-l:#0f766e;--pri-d:#14b8a6;
- --bg:#f3f4f7;--card:#ffffff;--card2:#f8f9fb;--ink:#101828;--mut:#667085;--line:#e6e8ee;--shadow:0 1px 2px rgba(16,24,40,.05),0 2px 8px rgba(16,24,40,.04);
- --pri:var(--pri-l);--pri-ink:#fff;--pri-soft:color-mix(in srgb,var(--pri) 12%,transparent);
- --up:#d92d20;--up-bg:#fee4e2;--down:#079455;--down-bg:#dcfae6;--new:#b54708;--new-bg:#fef0c7;--ok:#079455;--ok-bg:#dcfae6;--same:#475467;--same-bg:#eaecf0;
+:root{--pri-l:#0b6b63;--pri-d:#2dd4bf;
+ --bg:#f2f4f7;--card:#ffffff;--card2:#f6f8fa;--ink:#0f172a;--mut:#4f5b6d;--line:#dde2ea;--shadow:0 1px 2px rgba(15,23,42,.06),0 3px 10px rgba(15,23,42,.05);
+ --pri:var(--pri-l);--pri-ink:#fff;--pri-soft:color-mix(in srgb,var(--pri) 11%,transparent);
+ --up:#c4201a;--up-bg:#fde7e5;--down:#0a7a48;--down-bg:#ddf4e7;--new:#9a5200;--new-bg:#fdf0d2;--ok:#0a7a48;--ok-bg:#ddf4e7;--same:#475467;--same-bg:#e9edf2;
+ --info:#1849b8;--info-bg:#e1ebff;--alko:#8f1238;--alko-bg:#fbe3ec;--tagk:62%;--tagbg:15%;
  --r:16px;--pad:14px;--fs:16px}
-@media (prefers-color-scheme:dark){:root[data-theme=auto]{--tagk:55%;--tagbg:24%;--bg:#0b0e13;--card:#151a22;--card2:#1b212b;--ink:#eef0f3;--mut:#98a2b3;--line:#262d38;--shadow:none;--pri:var(--pri-d);--pri-ink:#0b0e13;
- --up:#f97066;--up-bg:#3a1512;--down:#47cd89;--down-bg:#0d2b1c;--new:#fdb022;--new-bg:#3a2a07;--ok:#47cd89;--ok-bg:#0d2b1c;--same:#cbd2dc;--same-bg:#262d38}}
-:root[data-theme=dark]{--tagk:55%;--tagbg:24%;--bg:#0b0e13;--card:#151a22;--card2:#1b212b;--ink:#eef0f3;--mut:#98a2b3;--line:#262d38;--shadow:none;--pri:var(--pri-d);--pri-ink:#0b0e13;
- --up:#f97066;--up-bg:#3a1512;--down:#47cd89;--down-bg:#0d2b1c;--new:#fdb022;--new-bg:#3a2a07;--ok:#47cd89;--ok-bg:#0d2b1c;--same:#cbd2dc;--same-bg:#262d38}
+@media (prefers-color-scheme:dark){:root[data-theme=auto]{--tagk:42%;--tagbg:26%;--bg:#090c11;--card:#131820;--card2:#1a212b;--ink:#f1f4f8;--mut:#a3adbd;--line:#2a3340;--shadow:none;--pri:var(--pri-d);--pri-ink:#04201c;
+ --up:#ff6d62;--up-bg:#401714;--down:#3fd68c;--down-bg:#0e3022;--new:#fbbf24;--new-bg:#3b2a06;--ok:#3fd68c;--ok-bg:#0e3022;--same:#cdd5e0;--same-bg:#262e3a;
+ --info:#8bbcff;--info-bg:#10294f;--alko:#ffa3bd;--alko-bg:#47112a}}
+:root[data-theme=dark]{--tagk:42%;--tagbg:26%;--bg:#090c11;--card:#131820;--card2:#1a212b;--ink:#f1f4f8;--mut:#a3adbd;--line:#2a3340;--shadow:none;--pri:var(--pri-d);--pri-ink:#04201c;
+ --up:#ff6d62;--up-bg:#401714;--down:#3fd68c;--down-bg:#0e3022;--new:#fbbf24;--new-bg:#3b2a06;--ok:#3fd68c;--ok-bg:#0e3022;--same:#cdd5e0;--same-bg:#262e3a;
+ --info:#8bbcff;--info-bg:#10294f;--alko:#ffa3bd;--alko-bg:#47112a}
 :root[data-density=compact]{--pad:10px;--fs:15px}
 :root[data-density=large]{--pad:17px;--fs:18px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -74,7 +77,7 @@ label{display:block;font-size:13px;color:var(--mut);font-weight:600}label input,
 @keyframes rowflash{0%{box-shadow:0 0 0 3px var(--ok)}100%{box-shadow:var(--shadow)}}
 @media (prefers-reduced-motion:reduce){.row.flash{animation:none}}
 .row:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--line)}
-.row.st-up:before{background:var(--up)}.row.st-down:before{background:var(--down)}.row.st-new:before{background:var(--new)}.row.st-ok:before{background:var(--ok);opacity:.5}.row.st-same:before{background:var(--same)}
+.row.st-up:before{background:var(--up)}.row.st-down:before{background:var(--down)}.row.st-new:before{background:var(--new);opacity:.45}.row.st-ok:before{background:var(--ok);opacity:.5}.row.st-same:before{background:var(--same)}
 .row:active{transform:scale(.995)}
 .row-main{flex:1;min-width:0}.row-title{font-weight:650;font-size:calc(var(--fs) - 1px);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .row-sub,.small{font-size:13px;color:var(--mut)}
@@ -93,15 +96,14 @@ label{display:block;font-size:13px;color:var(--mut);font-weight:600}label input,
 .search .clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:var(--line);color:var(--mut);width:24px;height:24px;border-radius:50%;font-size:12px}
 input[type=search]::-webkit-search-cancel-button{display:none}
 .chip{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--same-bg);color:var(--same);white-space:nowrap}
-.chip.up{background:var(--up-bg);color:var(--up)}.chip.down{background:var(--down-bg);color:var(--down)}.chip.new{background:var(--new-bg);color:var(--new)}.chip.ok{background:var(--ok-bg);color:var(--ok)}
-.row.st-up{background:color-mix(in srgb,var(--up) 7%,var(--card));border-color:color-mix(in srgb,var(--up) 35%,var(--line))}
+.chip.up{background:var(--up);color:#fff;font-weight:850;box-shadow:0 1px 0 rgba(0,0,0,.15)}.chip.down{background:var(--down-bg);color:var(--down)}.chip.new{background:transparent;color:var(--new);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--new) 55%,transparent)}.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.row.st-up{background:color-mix(in srgb,var(--up) 9%,var(--card));border-color:color-mix(in srgb,var(--up) 45%,var(--line))}
+.row.st-up:before{width:6px}
 .row.st-up .price{color:var(--up)}
 .row-sub s{opacity:.7}
-.drink{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 7px;border-radius:7px;background:var(--info-bg,#d1e9ff);color:#175cd3;margin-left:2px}
-.drink.alko{background:#fce7f3;color:#9f1239}
-:root[data-theme=dark] .drink{background:#0b2545;color:#84caff}:root[data-theme=dark] .drink.alko{background:#3b0d1c;color:#fda4af}
-@media (prefers-color-scheme:dark){:root[data-theme=auto] .drink{background:#0b2545;color:#84caff}:root[data-theme=auto] .drink.alko{background:#3b0d1c;color:#fda4af}}
-.alert-up{display:block;width:100%;text-align:left;border:0;background:var(--up-bg);color:var(--up);font-weight:800;border-radius:12px;padding:11px 13px;margin:10px 0;font-size:14.5px}
+.drink{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 7px;border-radius:7px;background:var(--info-bg);color:var(--info);margin-left:2px}
+.drink.alko{background:var(--alko-bg);color:var(--alko)}
+.alert-up{display:block;width:100%;text-align:left;border:0;background:var(--up);color:#fff;font-weight:800;border-radius:12px;padding:11px 13px;margin:10px 0;font-size:14.5px}
 .big-alert{font-size:16px}
 .suggest.is-up{border-color:var(--up)}.suggest.is-up .big{color:var(--up)}
 .rl{padding-right:8px}.tick{flex:0 0 44px;height:44px;border-radius:12px;border:2px solid var(--ok);background:var(--ok-bg);color:var(--ok);font-size:20px;font-weight:900}
@@ -503,7 +505,28 @@ const EAN = (() => {
     return best ? { code: best, votes: votes[best] } : null;
   }
 
-  return { decodeLine, decodeImageData, checksumOk };
+
+  // Skan z bufora jasności (szarość W×H): linie poziome i pionowe (kod położony bokiem), od środka na zewnątrz.
+  // Kod do góry nogami czyta się tak samo, bo decodeLine próbuje obu kierunków. Kończy od razu, gdy ten sam kod wyjdzie w 2 liniach.
+  function centerOut(n) { const mid = (n - 1) / 2; return Array.from({ length: n }, (_, i) => i).sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid)); }
+  function decodeGray(gray, W, H, lines = 13) {
+    const votes = {}, row = new Float32Array(W), col = new Float32Array(H);
+    let best = null;
+    const add = res => { for (const r of res) { votes[r.code] = (votes[r.code] || 0) + 1; if (!best || votes[r.code] > votes[best]) best = r.code; } };
+    for (const k of centerOut(lines)) {
+      const f = 0.18 + 0.64 * (k / (lines - 1));
+      const y = Math.round((H - 1) * f), x = Math.round((W - 1) * f);
+      for (let i = 0, o = y * W; i < W; i++) row[i] = gray[o + i];
+      add(decodeLine(row));
+      if (best && votes[best] >= 2) break;
+      for (let j = 0; j < H; j++) col[j] = gray[j * W + x];
+      add(decodeLine(col));
+      if (best && votes[best] >= 2) break;
+    }
+    return best ? { code: best, votes: votes[best] } : null;
+  }
+
+  return { decodeLine, decodeImageData, decodeGray, checksumOk };
 })();
 
 
@@ -511,8 +534,9 @@ const EAN = (() => {
 const Core = (() => {
   const DEFAULT_SETTINGS = {
     categories: [
-      { id: "spozywka", name: "Spożywka", margin: 34, color: "#d97706" },
+      { id: "spozywka", name: "Spożywka", margin: 34, color: "#ea580c" },
       { id: "alkohol", name: "Alkohol", margin: 25, color: "#9f1239", shelfTag: true },
+      { id: "piwo", name: "Piwo i drinki", margin: 34, color: "#ca8a04", shelfTag: true },
       { id: "warzywa", name: "Warzywa i owoce", margin: 40, color: "#16a34a" },
       { id: "chemia", name: "Chemia i inne", margin: 30, color: "#2563eb" },
       { id: "papierosy", name: "Papierosy (cena stała)", margin: 0, color: "#78716c" }
@@ -527,7 +551,9 @@ const Core = (() => {
   };
 
   const KEYWORDS = {
-    alkohol: ["piwo", "wódka", "wodka", "wino ", "whisky", "whiskey", "likier", "cydr", "brandy", " rum ", "gin ", "nalewka", "szampan", "prosecco", "tequila", "koniak", "cognac", "vodka", "bourbon", "porter", "lager", "radler", "aperitif", "martini", "% alk", "spirytus", "żubrówka", "soplica", "żołądkowa", "tyskie", "żywiec", "lech ", "okocim", "warka", "harnaś", "perła", "kasztelan", "carlsberg", "heineken", "desperados", "somersby", "kozel", "łomża", "wyborowa", "absolwent", "finlandia", "stock "],
+    // piwo, cydr i gotowe drinki (np. whiskey z colą) – wyceniane jak piwo; mocny alkohol zostaje w „alkohol”
+    piwo: ["piwo", "piwa ", "cydr", "radler", "porter", "lager", " ipa ", "stout", "pilsner", " pils ", "weizen", "tyskie", "żywiec", "lech ", "okocim", "warka", "harnaś", "harnas", "perła", "kasztelan", "carlsberg", "heineken", "desperados", "somersby", "kozel", "łomża", "książęce", "ksiazece", "komes", "corona", "paulaner", "strongbow", "żubr ", "zubr "],
+    alkohol: ["piwo", "wódka", "wodka", "wino ", "whisky", "whiskey", "likier", "cydr", "brandy", " rum ", "gin ", "nalewka", "szampan", "prosecco", "tequila", "koniak", "cognac", "vodka", "bourbon", "porter", "lager", "radler", "aperitif", "martini", "% alk", "spirytus", "żubrówka", "soplica", "żołądkowa", "tyskie", "żywiec", "lech ", "okocim", "warka", "harnaś", "perła", "kasztelan", "carlsberg", "heineken", "desperados", "somersby", "kozel", "łomża", "wyborowa", "absolwent", "finlandia", "stock ", "zubrowka", "jagermeister", "jägermeister", "bacardi", "ballantine", "jack daniel", "jim beam", "johnnie", "baileys", "tullamore", "glenfiddich", "chivas", "metaxa", "ouzo", "krupnik"],
     warzywa: ["ziemniak", "marchew", "cebula", "pomidor", "ogórek", "ogorek", "jabłk", "jablk", "banan", "kapusta", "sałata", "salata", "papryka", "pietruszk", "czosnek", "cytryn", "pomarańcz", "pomarancz", "mandaryn", "grejpfrut", "gruszk", "winogron", "burak", " por ", "seler", "kalafior", "brokuł", "brokul", "pieczark", "rzodkiew", "koper", "natka", "kiwi", "truskawk", "śliwk", "sliwk", "arbuz", "melon", "awokado", "ananas", "cukinia", "bakłażan", "dynia", "szczypior", "limonk", "nektaryn", "brzoskwin", "borówk", "malin", "czereśn", "wiśni", "rabarbar", "kalarep", "rukola", "szpinak", "fasolka szparag"],
     chemia: ["proszek do", "płyn do", "plyn do", "papier toal", "ręcznik pap", "recznik pap", "szampon", "mydło", "mydlo", "żel pod", "zel pod", "pasta do zęb", "dezodorant", "domestos", "ludwik", "worki na śmie", "gąbk", "chusteczk", "pieluch", "podpask", "kapsułki do", "tabletki do zmyw", "odplamiacz", "płukank", "baterie", "zapałki", "zapalniczk"],
     papierosy: ["papierosy", "l&m", "marlboro", "chesterfield", "camel ", "pall mall", "winston", "tytoń", "tyton", "iqos", "heets", "terea", "glo "]
@@ -537,8 +563,15 @@ const Core = (() => {
   const DRINK_W = ["woda", "wody", "cola", "pepsi", "sprite", "fanta", "7up", "mirinda", "sok", "soki", "nektar", "tonic", "kompot", "piwo", "piwa", "wino", "wina", "rum", "gin",
     "cydr", "radler", "whisky", "brandy", "spirytus", "likier", "oshee", "isostar", "powerade", "tiger", "cisowianka", "nałęczowianka", "muszynianka", "primavera", "staropolanka", "ustronianka"];
   const DRINK_S = ["napój", "napoj", "napoje", "oranżad", "oranzad", "lemoniad", "energety", "wódk", "wodk", "nalewk", "szampan", "prosecco", "kubuś", "kubus", "tymbark", "ice tea", "icetea", "red bull", "coca-cola", "coca cola"];
+  // gotowy drink z puszki: mocny alkohol + dodatek (cola, energy, tonic…) i niska moc
+  function isRtd(n) {
+    if (!/(whisky|whiskey|bourbon|jack daniel|jim beam|johnnie|\brum\b|vodka|wódka|wodka|\bgin\b)/.test(n)) return false;
+    if (!/(cola|colą|cole |coke|energy|tonic|ginger|lemon|&)/.test(n)) return false;
+    const m = /(\d{1,2}(?:[,.]\d)?)\s?%/.exec(n);
+    return !(m && parseFloat(m[1].replace(",", ".")) >= 15);
+  }
   function isDrink(name, cat) {
-    if (cat === "alkohol") return "alko";
+    if (cat === "alkohol" || cat === "piwo") return "alko";
     const n = " " + (name || "").toLowerCase().replace(/[^a-ząćęłńóśźż0-9%&\- ]+/g, " ") + " ";
     if (KEYWORDS.alkohol.some(k => n.includes(k))) return "alko";
     const words = n.trim().split(/\s+/);
@@ -576,7 +609,8 @@ const Core = (() => {
       if (k.two && learn[k.two] && has(learn[k.two])) return learn[k.two];
       if (k.one && learn[k.one] && has(learn[k.one])) return learn[k.one];
     }
-    for (const id of ["papierosy", "alkohol", "chemia"]) {
+    if (has("piwo") && isRtd(n)) return "piwo";
+    for (const id of ["papierosy", "piwo", "alkohol", "chemia"]) {
       if (has(id) && KEYWORDS[id].some(k => n.includes(k))) return id;
     }
     if (has("warzywa")) {
@@ -1018,11 +1052,11 @@ const Core = (() => {
 
   const PLC = new Intl.Collator("pl");
   const plcmp = (a, b) => PLC.compare(a || "", b || "");
-  return { detectPack, plcmp, isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, setRabat, costGross, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
+  return { isRtd, detectPack, plcmp, isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, setRabat, costGross, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
 })();
 
 
-const APP_VERSION = "1.0.1";
+const APP_VERSION = "1.3.0";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -1108,7 +1142,7 @@ function findByCode(code) {
 }
 function needsDecision(p) { return !!(p.lastCost && p.lastCost.invoiceId && p.decidedFor !== p.lastCost.invoiceId); }
 const CAT_PALETTE = ["#d97706", "#9f1239", "#16a34a", "#2563eb", "#78716c", "#7c3aed", "#0d9488", "#db2777", "#0891b2", "#65a30d", "#ea580c", "#4f46e5"];
-const CAT_DEFAULT = { spozywka: "#d97706", alkohol: "#9f1239", warzywa: "#16a34a", chemia: "#2563eb", papierosy: "#78716c" };
+const CAT_DEFAULT = { spozywka: "#ea580c", alkohol: "#9f1239", piwo: "#ca8a04", warzywa: "#16a34a", chemia: "#2563eb", papierosy: "#78716c" };
 function catColor(id) {
   const cs = S.settings.categories, i = cs.findIndex(c => c.id === id);
   if (i < 0) return "#98a2b3";
@@ -1321,7 +1355,7 @@ function statusCalc(p) {
 function plural(n, one, few, many) { const d = n % 10, t = n % 100; return n === 1 ? one : (d >= 2 && d <= 4 && (t < 12 || t > 14)) ? few : many; }
 function drinkBadge(p) {
   const d = Core.isDrink(p.invoiceName || p.name, p.category);
-  if (d === "alko" && p.category === "alkohol") return "";
+  if (d === "alko" && (p.category === "alkohol" || p.category === "piwo")) return "";
   return d === "alko" ? `<span class="drink alko">🍺 alkohol</span>` : d === "napoj" ? `<span class="drink">🥤 napój</span>` : "";
 }
 function priceRow(p, opts = {}) {
@@ -1836,6 +1870,7 @@ const Scanner = (() => {
     $("#btn-cam").textContent = "Włącz aparat";
   }
 
+  let gray = null;
   let torchOn = false;
   async function torch() {
     if (!stream) return;
@@ -1854,12 +1889,14 @@ const Scanner = (() => {
             const r = await detector.detect(v);
             if (r && r.length) code = r[0].rawValue;
           } else {
-            // pas środkowy klatki
-            const W = v.videoWidth, H = v.videoHeight;
-            const bandH = Math.round(H * 0.4);
-            canvas.width = W; canvas.height = bandH;
-            ctx.drawImage(v, 0, Math.round((H - bandH) / 2), W, bandH, 0, 0, W, bandH);
-            const r = EAN.decodeImageData(ctx.getImageData(0, 0, W, bandH), 25);
+            // cała klatka w pomniejszeniu (do 960 px): linie poziome i pionowe, od środka
+            const vw = v.videoWidth, vh = v.videoHeight, sc = Math.min(1, 960 / vw);
+            const W = Math.round(vw * sc), H = Math.round(vh * sc);
+            if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; gray = new Float32Array(W * H); }
+            ctx.drawImage(v, 0, 0, W, H);
+            const d = ctx.getImageData(0, 0, W, H).data;
+            for (let i = 0, j = 0; i < gray.length; i++, j += 4) gray[i] = 0.299 * d[j] + 0.587 * d[j + 1] + 0.114 * d[j + 2];
+            const r = EAN.decodeGray(gray, W, H, 13);
             if (r) code = r.votes >= 2 ? r.code : (last.code === r.code ? r.code : (last = { code: r.code, n: 1, t: Date.now() }, null));
           }
         } catch (e) {}
@@ -1872,7 +1909,7 @@ const Scanner = (() => {
         }
       }
     }
-    timer = setTimeout(loop, 60);
+    timer = setTimeout(loop, 15);
   }
 
   return { start, stop, torch, resume: () => { paused = false; lastHandled.t = Date.now(); }, isOn: () => !!stream };
@@ -1946,7 +1983,7 @@ async function backupImport(file) {
     await DB.clear("products"); await DB.clear("invoices");
     await DB.putMany("products", data.products); await DB.putMany("invoices", data.invoices);
     await DB.put("kv", { k: "learn", v: data.learn || {} });
-    S.settings = Object.assign({}, JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS)), data.settings); await migrateSettings(); applyTheme(); fillCatFilter();
+    S.settings = Object.assign({}, JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS)), data.settings); await migrateSettings(); await migrateBeer(true); applyTheme(); fillCatFilter();
     await loadAll(); renderAll(); renderSettings(); toast("Przywrócono kopię");
   } catch (e) { alertBox("Błąd przywracania: " + e.message); }
 }
@@ -1997,8 +2034,41 @@ async function migrateSettings() {
   if (!s.settingsVer) { if (!Number(s.changeTolerance)) s.changeTolerance = 0.10; s.settingsVer = 2; }
   if (s.settingsVer < 3) { const a = s.categories.find(c => c.id === "alkohol"); if (a && a.shelfTag === undefined) a.shelfTag = true; s.settingsVer = 3; }
   if (s.settingsVer < 4) { s.rabatOn = true; s.rabatPct = 2; s.settingsVer = 4; }
+  if (s.settingsVer < 5) {
+    if (!s.categories.some(c => c.id === "piwo")) {
+      const i = s.categories.findIndex(c => c.id === "alkohol");
+      s.categories.splice(i < 0 ? s.categories.length : i + 1, 0, { id: "piwo", name: "Piwo i drinki", margin: 34, color: "#ca8a04", shelfTag: true });
+    }
+    s.settingsVer = 5;
+  }
+  if (s.settingsVer < 6) {
+    // nowe, bardziej rozróżnialne kolory domyślnych kategorii (tylko jeśli nie zmieniałeś ich ręcznie)
+    const swap = { spozywka: ["#d97706", "#ea580c"], piwo: ["#c2410c", "#ca8a04"] };
+    for (const c of s.categories) { const m = swap[c.id]; if (m && String(c.color).toLowerCase() === m[0]) c.color = m[1]; }
+    s.settingsVer = 6;
+  }
   await saveSettings();
   Core.setRabat(s.rabatOn, s.rabatPct); SETV++;
+}
+// Piwo, cydr i gotowe drinki (np. whiskey z colą) mają 34%, mocny alkohol zostaje przy 25%
+async function migrateBeer(force) {
+  const kv = await DB.all("kv");
+  if (!force && (kv.find(x => x.k === "beerVer") || {}).v >= 1) return;
+  if (!S.settings.categories.some(c => c.id === "piwo")) return;
+  let lc = false;
+  for (const k of Object.keys(S.learn)) {
+    if (S.learn[k] === "alkohol" && Core.guessCategory(k + " ", 0, S.settings, {}) === "piwo") { delete S.learn[k]; lc = true; }
+  }
+  if (lc) await DB.put("kv", { k: "learn", v: S.learn });
+  const changed = [];
+  for (const p of S.products.values()) {
+    if (p.category !== "alkohol") continue;
+    if (Core.guessCategory(p.invoiceName || p.name, p.lastCost ? p.lastCost.vat : 0, S.settings, S.learn) === "piwo") { p.category = "piwo"; changed.push(p); }
+  }
+  if (changed.length) await DB.putMany("products", changed);
+  await DB.put("kv", { k: "beerVer", v: 1 });
+  SETV++;
+  if (changed.length) setTimeout(() => toast(`Piwo i drinki (${changed.length}) przeniesione do kategorii „Piwo i drinki” – 34%`, 5000), 900);
 }
 async function init() {
   await DB.open();
@@ -2006,6 +2076,7 @@ async function init() {
   await migrateCategories();
   await migratePacks();
   await migrateSettings();
+  await migrateBeer();
   Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++;
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 

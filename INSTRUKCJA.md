@@ -32,3 +32,8 @@ Okno produktu lub dostawy zamkniesz ✕, dotknięciem tła albo zsunięciem uchw
 - Zgrzewki: na karcie produktu wpisz „Szt. w opakowaniu".
 - Korekty faktur są pomijane przy imporcie.
 - **Aktualizacja** = podmiana plików na GitHubie. Po niej zamknij aplikację całkiem i otwórz ją ponownie. Numer wersji jest na dole Ustawień.
+
+## Nowości w 1.3.0
+- **Piwo i drinki (34%)** – piwo, cydry i gotowe drinki (np. whisky z colą) mają własną kategorię z marżą 34%; wysokoprocentowy alkohol zostaje przy 25%.
+- **Nowe kolory** – podwyżki czerwone, obniżki zielone, nowe produkty niebieskie; lepszy kontrast w trybie jasnym i ciemnym.
+- **Szybszy skaner** – kod można trzymać poziomo, pionowo i do góry nogami. Skaner sprawdza całą klatkę i zatrzymuje się po pierwszym pewnym odczycie.
