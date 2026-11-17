@@ -98,6 +98,14 @@ input[type=search]::-webkit-search-cancel-button{display:none}
 .inv{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:8px 0;cursor:pointer;box-shadow:var(--shadow)}
 .inv-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .bar{height:6px;background:var(--line);border-radius:99px;margin:10px 0 6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri);border-radius:99px;transition:width .3s}
+.rabat-box{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0}
+.rabat-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.rabat-top b{font-size:15px}
+.switch{position:relative;width:52px;height:32px;flex:none;display:block;margin:0}.switch input{opacity:0;position:absolute;inset:0;width:100%;height:100%;margin:0;z-index:2}
+.switch .sl{position:absolute;inset:0;background:var(--line);border-radius:16px;transition:background .2s}
+.switch .sl::after{content:"";position:absolute;left:3px;top:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .2s}
+.switch input:checked+.sl{background:var(--pri)}.switch input:checked+.sl::after{transform:translateX(20px)}
+.rabat-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:14px}.rabat-row.off{opacity:.4;pointer-events:none}
+.pctin{display:flex;align-items:center;gap:6px}.pctin input{width:76px;text-align:right;margin:0}.pctin span{font-weight:650;color:var(--mut)}
 .seg{display:flex;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:3px;margin:12px 0;gap:3px}
 .seg button{flex:1;border:0;background:none;color:var(--mut);padding:8px 4px;border-radius:9px;font-size:13px;font-weight:650;white-space:nowrap}.seg button.seg-up{color:var(--up)}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
@@ -214,7 +222,12 @@ details label{margin-top:10px}
         <label>Zaokrąglaj do<select id="set-step"><option value="0.01">1 gr</option><option value="0.05">5 gr</option><option value="0.1">10 gr</option><option value="0.5">50 gr</option><option value="1">1 zł</option></select></label>
         <label>W górę od reszty (zł)<input id="set-thr" inputmode="decimal"></label>
       </div>
-      <label class="row" style="display:flex;align-items:center;gap:10px;margin:10px 0"><input type="checkbox" id="set-bon" style="width:auto"><span>Rabat (bon) włączony – licz od ceny po rabacie<br><span class="small">Wyłączony: cena z faktury przed bonem</span></span></label>
+      <div class="rabat-box">
+        <div class="rabat-top"><div><b>Rabat Eurocash</b><div class="small">Ceny zakupu jak w aplikacji Eurocash (faktura minus stały rabat)</div></div>
+          <label class="switch"><input type="checkbox" id="set-bon"><span class="sl"></span></label></div>
+        <div class="rabat-row" id="rabat-row"><span>Wysokość rabatu</span><div class="pctin"><input id="set-rabat" inputmode="decimal"><span>%</span></div></div>
+        <div class="hint" id="rabat-ex"></div>
+      </div>
       <label>Nie zmieniaj ceny, gdy różnica mniejsza niż (zł)<input id="set-tol" inputmode="decimal" placeholder="0,10"></label>
       <label style="margin-top:10px">Końcówka<select id="set-end"><option value="0">pełna (3,50)</option><option value="1">minus 1 gr (3,49)</option><option value="5">minus 5 gr (3,45)</option></select></label>
       <div class="hint" id="set-example" style="margin-top:10px"></div>
@@ -593,10 +606,10 @@ const Core = (() => {
   }
 
   // koszt brutto jednej sztuki na półce
-  // false = cena przed bonem (domyślnie), true = cena po rabacie (bonie)
-  let USE_BON = false;
-  function setUseBon(v) { USE_BON = !!v; }
-  function costGross(c) { return USE_BON && c && c.grossPaid > 0 ? c.grossPaid : c.gross; }
+  // Rabat Eurocash: cena zakupu = cena z faktury pomniejszona o stały procent (jak w aplikacji Eurocash)
+  let RABAT = { on: false, pct: 0 };
+  function setRabat(on, pct) { RABAT = { on: !!on, pct: Number(pct) || 0 }; }
+  function costGross(c) { return RABAT.on && RABAT.pct > 0 ? c.gross * (1 - RABAT.pct / 100) : c.gross; }
   function unitCost(product) {
     if (!product || !product.lastCost) return null;
     const pack = Number(product.packQty) || 1;
@@ -967,11 +980,11 @@ const Core = (() => {
 
   function fmt(x) { return x === null || x === undefined || !isFinite(x) ? "—" : x.toFixed(2).replace(".", ","); }
 
-  return { isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, setUseBon, costGross, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
+  return { isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, setRabat, costGross, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
 })();
 
 
-const APP_VERSION = "9";
+const APP_VERSION = "10";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -1722,7 +1735,10 @@ function renderSettings() {
   $("#set-thr").value = F(s.roundThreshold);
   $("#set-end").value = String(s.ending || 0);
   $("#set-tol").value = F(Number(s.changeTolerance) || 0);
-  $("#set-bon").checked = !!s.useBon;
+  $("#set-bon").checked = !!s.rabatOn;
+  $("#set-rabat").value = F(Number(s.rabatPct) || 0);
+  $("#rabat-row").classList.toggle("off", !s.rabatOn);
+  $("#rabat-ex").textContent = s.rabatOn ? `Przykład: faktura ${F(3.97)} zł → zakup ${F(3.97 * (1 - (Number(s.rabatPct) || 0) / 100))} zł` : "Wyłączony: zakup = cena z faktury, bez rabatu.";
   updateExample();
 }
 function updateExample() {
@@ -1746,7 +1762,7 @@ async function backupImport(file) {
     await DB.clear("products"); await DB.clear("invoices");
     await DB.putMany("products", data.products); await DB.putMany("invoices", data.invoices);
     await DB.put("kv", { k: "learn", v: data.learn || {} });
-    S.settings = Object.assign({}, Core.DEFAULT_SETTINGS, data.settings); await saveSettings(); Core.setUseBon(S.settings.useBon); applyTheme(); fillCatFilter();
+    S.settings = Object.assign({}, Core.DEFAULT_SETTINGS, data.settings); await saveSettings(); Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); applyTheme(); fillCatFilter();
     await loadAll(); renderAll(); renderSettings(); toast("Przywrócono kopię");
   } catch (e) { alertBox("Błąd przywracania: " + e.message); }
 }
@@ -1775,7 +1791,7 @@ async function loadAll() {
   const st = kv.find(x => x.k === "settings");
   const ln = kv.find(x => x.k === "learn"); S.learn = ln ? ln.v : {};
   S.settings = st ? Object.assign({}, JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS)), st.v) : JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS));
-  Core.setUseBon(S.settings.useBon);
+  Core.setRabat(S.settings.rabatOn, S.settings.rabatPct);
 }
 
 // ===================== Start =====================
@@ -1785,6 +1801,8 @@ async function init() {
   await migrateCategories();
   if (!S.settings.settingsVer) { if (!Number(S.settings.changeTolerance)) S.settings.changeTolerance = 0.10; S.settings.settingsVer = 2; await saveSettings(); }
   if (S.settings.settingsVer < 3) { const a = S.settings.categories.find(c => c.id === "alkohol"); if (a && a.shelfTag === undefined) a.shelfTag = true; S.settings.settingsVer = 3; await saveSettings(); }
+  if (S.settings.settingsVer < 4) { S.settings.rabatOn = true; S.settings.rabatPct = 2; S.settings.settingsVer = 4; await saveSettings(); }
+  Core.setRabat(S.settings.rabatOn, S.settings.rabatPct);
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 
   document.querySelectorAll("nav button").forEach(b => b.onclick = () => show(b.dataset.tab));
@@ -1811,7 +1829,8 @@ async function init() {
   $("#set-mode").onchange = async e => { S.settings.marginMode = e.target.value; await saveSettings(); updateExample(); renderAll(); };
   $("#set-step").onchange = async e => { S.settings.roundStep = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
   $("#set-thr").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v)) S.settings.roundThreshold = v; await saveSettings(); updateExample(); renderAll(); };
-  $("#set-bon").onchange = async e => { S.settings.useBon = e.target.checked; Core.setUseBon(S.settings.useBon); await saveSettings(); renderAll(); };
+  $("#set-bon").onchange = async e => { S.settings.rabatOn = e.target.checked; Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); await saveSettings(); renderAll(); renderSettings(); };
+  $("#set-rabat").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v) && v >= 0 && v < 50) S.settings.rabatPct = v; Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); await saveSettings(); renderAll(); renderSettings(); };
   $("#set-tol").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v) && v >= 0) S.settings.changeTolerance = v; await saveSettings(); renderAll(); };
   $("#set-end").onchange = async e => { S.settings.ending = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
   $("#add-cat").onclick = async () => {
