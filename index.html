@@ -214,6 +214,7 @@ details label{margin-top:10px}
         <label>Zaokrąglaj do<select id="set-step"><option value="0.01">1 gr</option><option value="0.05">5 gr</option><option value="0.1">10 gr</option><option value="0.5">50 gr</option><option value="1">1 zł</option></select></label>
         <label>W górę od reszty (zł)<input id="set-thr" inputmode="decimal"></label>
       </div>
+      <label class="row" style="display:flex;align-items:center;gap:10px;margin:10px 0"><input type="checkbox" id="set-bon" style="width:auto"><span>Rabat (bon) włączony – licz od ceny po rabacie<br><span class="small">Wyłączony: cena z faktury przed bonem</span></span></label>
       <label>Nie zmieniaj ceny, gdy różnica mniejsza niż (zł)<input id="set-tol" inputmode="decimal" placeholder="0,10"></label>
       <label style="margin-top:10px">Końcówka<select id="set-end"><option value="0">pełna (3,50)</option><option value="1">minus 1 gr (3,49)</option><option value="5">minus 5 gr (3,45)</option></select></label>
       <div class="hint" id="set-example" style="margin-top:10px"></div>
@@ -592,10 +593,14 @@ const Core = (() => {
   }
 
   // koszt brutto jednej sztuki na półce
+  // false = cena przed bonem (domyślnie), true = cena po rabacie (bonie)
+  let USE_BON = false;
+  function setUseBon(v) { USE_BON = !!v; }
+  function costGross(c) { return USE_BON && c && c.grossPaid > 0 ? c.grossPaid : c.gross; }
   function unitCost(product) {
     if (!product || !product.lastCost) return null;
     const pack = Number(product.packQty) || 1;
-    return product.lastCost.gross / pack;
+    return costGross(product.lastCost) / pack;
   }
 
   function suggestedPrice(product, settings) {
@@ -962,11 +967,11 @@ const Core = (() => {
 
   function fmt(x) { return x === null || x === undefined || !isFinite(x) ? "—" : x.toFixed(2).replace(".", ","); }
 
-  return { isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
+  return { isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, setUseBon, costGross, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
 })();
 
 
-const APP_VERSION = "8";
+const APP_VERSION = "9";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -1434,7 +1439,7 @@ function openProduct(p, onClose) {
     const pc = prevCost(p);
     const uc = Core.unitCost(p);
     const pack = Number(p.packQty) || 1;
-    const prevUnit = pc ? pc.gross / pack : null;
+    const prevUnit = pc ? Core.costGross(pc) / pack : null;
     const delta = pc && prevUnit ? ((uc - prevUnit) / prevUnit * 100) : null;
     const mWord = s.marginMode === "marza" ? "marża" : "narzut";
     const realM = p.shelfPrice != null && uc ? (s.marginMode === "marza" ? (p.shelfPrice - uc) / p.shelfPrice * 100 : (p.shelfPrice - uc) / uc * 100) : null;
@@ -1485,7 +1490,7 @@ function openProduct(p, onClose) {
       </details>
       <details><summary>Historia cen</summary>
         <h4>Zakup</h4>
-        ${(p.costHistory || []).slice().reverse().map(c => `<div class="kv small"><span>${esc(c.date)} · ${esc(c.invoiceNo || "")}</span><span>${F(c.gross / pack)} zł</span></div>`).join("") || "<div class='small'>—</div>"}
+        ${(p.costHistory || []).slice().reverse().map(c => `<div class="kv small"><span>${esc(c.date)} · ${esc(c.invoiceNo || "")}</span><span>${F(Core.costGross(c) / pack)} zł</span></div>`).join("") || "<div class='small'>—</div>"}
         <h4>Na półce</h4>
         ${(p.priceHistory || []).slice().reverse().map(h => `<div class="kv small"><span>${esc(h.date)} · ${h.action === "keep" ? "bez zmian" : h.action === "manual" ? "ręcznie" : "zmiana"}</span><span>${h.prev != null && h.prev !== h.price ? F(h.prev) + " → " : ""}${F(h.price)} zł</span></div>`).join("") || "<div class='small'>—</div>"}
       </details>
@@ -1717,6 +1722,7 @@ function renderSettings() {
   $("#set-thr").value = F(s.roundThreshold);
   $("#set-end").value = String(s.ending || 0);
   $("#set-tol").value = F(Number(s.changeTolerance) || 0);
+  $("#set-bon").checked = !!s.useBon;
   updateExample();
 }
 function updateExample() {
@@ -1740,7 +1746,7 @@ async function backupImport(file) {
     await DB.clear("products"); await DB.clear("invoices");
     await DB.putMany("products", data.products); await DB.putMany("invoices", data.invoices);
     await DB.put("kv", { k: "learn", v: data.learn || {} });
-    S.settings = Object.assign({}, Core.DEFAULT_SETTINGS, data.settings); await saveSettings(); applyTheme(); fillCatFilter();
+    S.settings = Object.assign({}, Core.DEFAULT_SETTINGS, data.settings); await saveSettings(); Core.setUseBon(S.settings.useBon); applyTheme(); fillCatFilter();
     await loadAll(); renderAll(); renderSettings(); toast("Przywrócono kopię");
   } catch (e) { alertBox("Błąd przywracania: " + e.message); }
 }
@@ -1769,6 +1775,7 @@ async function loadAll() {
   const st = kv.find(x => x.k === "settings");
   const ln = kv.find(x => x.k === "learn"); S.learn = ln ? ln.v : {};
   S.settings = st ? Object.assign({}, JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS)), st.v) : JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS));
+  Core.setUseBon(S.settings.useBon);
 }
 
 // ===================== Start =====================
@@ -1804,6 +1811,7 @@ async function init() {
   $("#set-mode").onchange = async e => { S.settings.marginMode = e.target.value; await saveSettings(); updateExample(); renderAll(); };
   $("#set-step").onchange = async e => { S.settings.roundStep = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
   $("#set-thr").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v)) S.settings.roundThreshold = v; await saveSettings(); updateExample(); renderAll(); };
+  $("#set-bon").onchange = async e => { S.settings.useBon = e.target.checked; Core.setUseBon(S.settings.useBon); await saveSettings(); renderAll(); };
   $("#set-tol").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v) && v >= 0) S.settings.changeTolerance = v; await saveSettings(); renderAll(); };
   $("#set-end").onchange = async e => { S.settings.ending = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
   $("#add-cat").onclick = async () => {
