@@ -933,7 +933,12 @@ const Core = (() => {
 
   // ---------- inteligentne wyszukiwanie ----------
   const PL = { "ą": "a", "ć": "c", "ę": "e", "ł": "l", "ń": "n", "ó": "o", "ś": "s", "ź": "z", "ż": "z" };
+  const NCACHE = new Map();
   function norm(s) {
+    s = String(s || ""); let r = NCACHE.get(s); if (r !== undefined) return r;
+    r = normRaw(s); if (NCACHE.size > 6000) NCACHE.clear(); NCACHE.set(s, r); return r;
+  }
+  function normRaw(s) {
     return String(s || "").toLowerCase().replace(/[ąćęłńóśźż]/g, ch => PL[ch]).replace(/(\d),(\d)/g, "$1.$2").replace(/[^a-z0-9.%]+/g, " ").trim();
   }
   function lev(a, b, max) {
@@ -980,11 +985,13 @@ const Core = (() => {
 
   function fmt(x) { return x === null || x === undefined || !isFinite(x) ? "—" : x.toFixed(2).replace(".", ","); }
 
-  return { isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, setRabat, costGross, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
+  const PLC = new Intl.Collator("pl");
+  const plcmp = (a, b) => PLC.compare(a || "", b || "");
+  return { plcmp, isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, setRabat, costGross, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
 })();
 
 
-const APP_VERSION = "10";
+const APP_VERSION = "11";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -1036,7 +1043,8 @@ function normCode(c) {
   return c;
 }
 
-async function saveSettings() { await DB.put("kv", { k: "settings", v: S.settings }); }
+async function saveSettings() {
+  SETV++; await DB.put("kv", { k: "settings", v: S.settings }); }
 async function setCategory(p, cat) {
   p.category = cat; p.catManual = true;
   Core.learnCategory(S.learn, p.invoiceName || p.name, cat);
@@ -1194,13 +1202,21 @@ function show(tab) {
   const titles = { scan: "Skanuj", deliveries: "Dostawy", products: "Produkty", settings: "Ustawienia" };
   $("#hdr-title").textContent = titles[tab];
   if (tab !== "scan") Scanner.stop();
+  if (tab === "scan") renderRecent();
   if (tab === "products") renderProducts();
   if (tab === "deliveries") renderInvoices();
   if (tab === "settings") renderSettings();
   window.scrollTo(0, 0);
 }
 
-function renderAll() { renderInvoices(); renderProducts(); renderRecent(); renderStats(); }
+function renderAll() {
+  // rysujemy tylko widoczną kartę; pozostałe odświeżą się przy przełączeniu (show)
+  renderStats();
+  const t = document.querySelector(".tab.active"); const id = t ? t.id : "tab-scan";
+  if (id === "tab-scan") renderRecent();
+  else if (id === "tab-products") renderProducts();
+  else if (id === "tab-deliveries") renderInvoices();
+}
 
 function relabelList() { return [...S.products.values()].filter(p => p.relabel); }
 function renderStats() {
@@ -1226,7 +1242,7 @@ function isShelfTag(p) { const c = S.settings.categories.find(c => c.id === p.ca
 function openRelabel() {
   const draw = () => {
     const isD = p => Core.isDrink(p.invoiceName || p.name, p.category) ? 1 : 0;
-    const list = relabelList().sort((a, b) => (b.relabel.up - a.relabel.up) || (isD(b) - isD(a)) || (a.name || "").localeCompare(b.name || "", "pl"));
+    const list = relabelList().sort((a, b) => (b.relabel.up - a.relabel.up) || (isD(b) - isD(a)) || Core.plcmp(a.name, b.name));
     const shelfL = list.filter(isShelfTag), tagL = list.filter(p => !isShelfTag(p));
     const up = tagL.filter(p => p.relabel.up), other = tagL.filter(p => !p.relabel.up);
     const row = p => `<div class="row rl ${p.relabel.up ? "st-up" : "st-ok"}" data-pid="${p.id}">
@@ -1249,7 +1265,19 @@ function openRelabel() {
   draw();
 }
 
+let SETV = 0;
+const _stCache = new Map();
 function statusOf(p) {
+  const lc = p.lastCost;
+  const sig = SETV + "|" + p.shelfPrice + "|" + p.decidedFor + "|" + p.category + "|" + p.packQty + "|" + p.marginOverride + "|" + (lc ? lc.gross + "|" + lc.invoiceId : "");
+  const hit = _stCache.get(p.id);
+  if (hit && hit.sig === sig) return hit.st;
+  const st = statusCalc(p);
+  if (_stCache.size > 20000) _stCache.clear();
+  _stCache.set(p.id, { sig, st });
+  return st;
+}
+function statusCalc(p) {
   const sp = Core.suggestedPrice(p, S.settings);
   if (!p.lastCost) return { cls: "muted", label: "bez kosztu", sp };
   if (!needsDecision(p)) return { cls: "ok", label: "✓", sp };
@@ -1331,7 +1359,7 @@ function openInvoice(id) {
   const drawRows = () => {
     const ps = products();
     let list = mode === "open" ? ps.filter(isOpen) : mode === "up" ? ps.filter(p => isOpen(p) && statusOf(p).cls === "up") : ps;
-    if (mode !== "cat") list.sort((a, b) => urgency(a) - urgency(b) || (a.name || "").localeCompare(b.name || "", "pl"));
+    if (mode !== "cat") list = list.map(p => ({ p, u: urgency(p) })).sort((a, b) => a.u - b.u || Core.plcmp(a.p.name, b.p.name)).map(x => x.p);
     const q = query.trim();
     if (q) {
       // szukamy w całej fakturze; pozycje do decyzji wyżej
@@ -1414,7 +1442,7 @@ function renderProducts() {
   if (filter === "open") list = list.filter(needsDecision);
   if (filter === "noean") list = list.filter(p => !(p.eans || []).length);
   if (filter.startsWith("cat:")) list = list.filter(p => p.category === filter.slice(4));
-  list.sort((a, b) => scores ? (scores.get(b.id) - scores.get(a.id)) || (a.name || "").localeCompare(b.name || "", "pl") : (a.name || "").localeCompare(b.name || "", "pl"));
+  list.sort((a, b) => scores ? (scores.get(b.id) - scores.get(a.id)) || Core.plcmp(a.name, b.name) : Core.plcmp(a.name, b.name));
   $("#prod-count").textContent = `${list.length} produktów`;
   const box = $("#prod-list");
   box.innerHTML = list.slice(0, 300).map(p => priceRow(p)).join("") + (list.length > 300 ? `<div class="empty">Pokazano 300 z ${list.length} – zawęź wyszukiwanie.</div>` : "")
@@ -1607,7 +1635,8 @@ function modal(html, onClose) {
 }
 function closeModal() {
   const m = $("#modal"); m.classList.remove("open"); m._redraw = null;
-  const cb = m._onClose; m._onClose = null; if (cb) cb();
+  const cb = m._onClose; m._onClose = null;
+  if (cb) requestAnimationFrame(() => setTimeout(cb, 0));
 }
 function alertBox(msg) { modal(`<pre class="msg">${esc(msg)}</pre><div class="btns"><button class="btn primary" onclick="closeModal()">OK</button></div>`, null); }
 
@@ -1762,7 +1791,7 @@ async function backupImport(file) {
     await DB.clear("products"); await DB.clear("invoices");
     await DB.putMany("products", data.products); await DB.putMany("invoices", data.invoices);
     await DB.put("kv", { k: "learn", v: data.learn || {} });
-    S.settings = Object.assign({}, Core.DEFAULT_SETTINGS, data.settings); await saveSettings(); Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); applyTheme(); fillCatFilter();
+    S.settings = Object.assign({}, Core.DEFAULT_SETTINGS, data.settings); await saveSettings(); Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++; applyTheme(); fillCatFilter();
     await loadAll(); renderAll(); renderSettings(); toast("Przywrócono kopię");
   } catch (e) { alertBox("Błąd przywracania: " + e.message); }
 }
@@ -1791,7 +1820,7 @@ async function loadAll() {
   const st = kv.find(x => x.k === "settings");
   const ln = kv.find(x => x.k === "learn"); S.learn = ln ? ln.v : {};
   S.settings = st ? Object.assign({}, JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS)), st.v) : JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS));
-  Core.setRabat(S.settings.rabatOn, S.settings.rabatPct);
+  Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++;
 }
 
 // ===================== Start =====================
@@ -1802,7 +1831,7 @@ async function init() {
   if (!S.settings.settingsVer) { if (!Number(S.settings.changeTolerance)) S.settings.changeTolerance = 0.10; S.settings.settingsVer = 2; await saveSettings(); }
   if (S.settings.settingsVer < 3) { const a = S.settings.categories.find(c => c.id === "alkohol"); if (a && a.shelfTag === undefined) a.shelfTag = true; S.settings.settingsVer = 3; await saveSettings(); }
   if (S.settings.settingsVer < 4) { S.settings.rabatOn = true; S.settings.rabatPct = 2; S.settings.settingsVer = 4; await saveSettings(); }
-  Core.setRabat(S.settings.rabatOn, S.settings.rabatPct);
+  Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++;
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 
   document.querySelectorAll("nav button").forEach(b => b.onclick = () => show(b.dataset.tab));
@@ -1820,7 +1849,7 @@ async function init() {
   };
 
   $("#file-input").onchange = e => { const f = [...e.target.files]; e.target.value = ""; if (f.length) importFiles(f); };
-  $("#prod-search").oninput = renderProducts;
+  let _ps; $("#prod-search").oninput = () => { clearTimeout(_ps); _ps = setTimeout(renderProducts, 120); };
   $("#prod-filter").onchange = renderProducts;
 
   $("#set-theme").querySelectorAll("button").forEach(b => b.onclick = async () => { S.settings.theme = b.dataset.v; applyTheme(); await saveSettings(); renderSettings(); });
@@ -1829,8 +1858,8 @@ async function init() {
   $("#set-mode").onchange = async e => { S.settings.marginMode = e.target.value; await saveSettings(); updateExample(); renderAll(); };
   $("#set-step").onchange = async e => { S.settings.roundStep = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
   $("#set-thr").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v)) S.settings.roundThreshold = v; await saveSettings(); updateExample(); renderAll(); };
-  $("#set-bon").onchange = async e => { S.settings.rabatOn = e.target.checked; Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); await saveSettings(); renderAll(); renderSettings(); };
-  $("#set-rabat").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v) && v >= 0 && v < 50) S.settings.rabatPct = v; Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); await saveSettings(); renderAll(); renderSettings(); };
+  $("#set-bon").onchange = async e => { S.settings.rabatOn = e.target.checked; Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++; await saveSettings(); renderAll(); renderSettings(); };
+  $("#set-rabat").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v) && v >= 0 && v < 50) S.settings.rabatPct = v; Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++; await saveSettings(); renderAll(); renderSettings(); };
   $("#set-tol").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v) && v >= 0) S.settings.changeTolerance = v; await saveSettings(); renderAll(); };
   $("#set-end").onchange = async e => { S.settings.ending = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
   $("#add-cat").onclick = async () => {
