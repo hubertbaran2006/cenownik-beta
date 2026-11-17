@@ -61,6 +61,8 @@ label{display:block;font-size:13px;color:var(--mut);font-weight:600}label input,
 .stat.hot b{color:var(--new)}.stat.warn b{color:var(--up)}
 .row{position:relative;display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:var(--pad) var(--pad) var(--pad) calc(var(--pad) + 4px);margin:7px 0;cursor:pointer;box-shadow:var(--shadow);overflow:hidden}
 .row{touch-action:pan-y}
+.grp{display:flex;justify-content:space-between;align-items:center;margin:16px 4px 2px;font-size:12.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}.grp span{background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:1px 9px;font-size:12px}
+.seg-sm{margin:4px 0 8px}.seg-sm button{font-size:12.5px}
 .swipe-wrap{position:relative;overflow:hidden;border-radius:14px}
 .swipe-bg{position:absolute;inset:0;display:flex;align-items:center;gap:10px;padding-left:18px;color:#fff;font-weight:800;font-size:15px;border-radius:14px;background:color-mix(in srgb,var(--ok) calc(var(--p,0)*85%),var(--card2))}
 .swipe-bg .sw-ic{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.28);display:grid;place-items:center;font-size:17px;opacity:var(--p,0);transform:scale(calc(.5 + var(--p,0)*.5))}
@@ -139,8 +141,8 @@ input[type=search]::-webkit-search-cancel-button{display:none}
 #modal.open{display:flex}
 .sheet{background:var(--bg);width:100%;max-width:720px;max-height:93vh;border-radius:22px 22px 0 0;display:flex;flex-direction:column;animation:up .2s cubic-bezier(.2,.8,.2,1)}
 @keyframes up{from{transform:translateY(60px);opacity:.4}}
-.sheet-top{display:flex;justify-content:center;position:relative;padding:8px 10px 2px}
-.sheet-top:before{content:"";width:38px;height:5px;border-radius:9px;background:var(--line);margin-top:2px}
+.sheet-top{display:flex;justify-content:center;position:relative;padding:12px 10px 10px;touch-action:none;cursor:grab}
+.sheet-top:before{content:"";width:42px;height:5px;border-radius:9px;background:var(--mut);opacity:.45}
 #modal-close{position:absolute;right:12px;top:8px;border:0;background:var(--card2);color:var(--mut);width:32px;height:32px;border-radius:50%;font-size:15px;font-weight:700}
 #modal-body{overflow:auto;padding:4px 18px calc(28px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
 .title-input{font-family:inherit;font-size:21px;font-weight:800;line-height:1.25;width:100%;resize:none;color:var(--ink);border:0;background:transparent;padding:4px 40px 4px 0;outline:none;letter-spacing:-.3px;box-shadow:none!important}
@@ -164,9 +166,13 @@ pre.msg{white-space:pre-wrap;font:inherit;margin:8px 0}
 .sw.on{box-shadow:0 0 0 2px var(--ink)}
 #toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#101828;color:#fff;padding:11px 16px;border-radius:14px;opacity:0;transition:.2s;z-index:30;pointer-events:none;max-width:90%;text-align:center;font-weight:600;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 #toast.show{opacity:1;transform:translateX(-50%)}
-#snack{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto;display:flex;align-items:center;gap:10px;background:#101828;color:#fff;padding:10px 10px 10px 16px;border-radius:14px;z-index:31;transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s;font-weight:600;font-size:14.5px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+#snack{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto;display:flex;align-items:center;gap:12px;background:var(--ink);color:var(--bg);padding:10px 10px 10px 16px;border-radius:16px;z-index:31;transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s;font-weight:650;font-size:14.5px;box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 1px var(--line);overflow:hidden}
 #snack.show{opacity:1;transform:none;pointer-events:auto}#snack span{flex:1}
-#snack button{border:0;background:rgba(255,255,255,.14);color:#fff;font-weight:800;padding:9px 14px;border-radius:10px}
+#snack button{border:0;background:#14b8a6;color:#052e2a;font-weight:850;font-size:15px;letter-spacing:.02em;padding:11px 20px;border-radius:11px;text-transform:uppercase;box-shadow:0 1px 0 rgba(255,255,255,.35) inset}
+#snack button:active{transform:scale(.96)}
+#snack::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;background:#14b8a6;transform-origin:left;opacity:0}
+#snack.show::after{opacity:.9;animation:snacktime 6s linear forwards}
+@keyframes snacktime{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 .p-title{font-size:21px;line-height:1.25;margin:4px 40px 6px 0;letter-spacing:-.3px}
 .suggest .up-head{display:inline-block;background:var(--up);color:#fff;font-weight:800;font-size:13px;border-radius:99px;padding:4px 11px;margin-bottom:4px}
 .suggest .small b{color:var(--ink)}.suggest .tol{margin-top:4px}
@@ -1008,7 +1014,7 @@ const Core = (() => {
 })();
 
 
-const APP_VERSION = "13";
+const APP_VERSION = "15";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -1444,13 +1450,14 @@ function renderInvoices() {
 function openInvoice(id) {
   const inv = S.invoices.find(i => i.id === id);
   if (!inv) return;
-  let mode = "open", query = "";
+  let mode = "open", query = "", sortMode = localStorage.getItem("cenownik-invsort") || "cat";
   const products = () => [...new Map(inv.lines.map(l => [l.productId, S.products.get(l.productId)])).values()].filter(Boolean);
   const isOpen = p => needsDecision(p) && p.lastCost.invoiceId === inv.id;
   const drawRows = () => {
     const ps = products();
     let list = mode === "open" ? ps.filter(isOpen) : mode === "up" ? ps.filter(p => isOpen(p) && statusOf(p).cls === "up") : ps;
     if (mode !== "cat") list = list.map(p => ({ p, u: urgency(p) })).sort((a, b) => a.u - b.u || Core.plcmp(a.p.name, b.p.name)).map(x => x.p);
+    const grouped = sortMode === "cat" && mode !== "cat" && !query.trim();
     const q = query.trim();
     if (q) {
       // szukamy w całej fakturze; pozycje do decyzji wyżej
@@ -1458,7 +1465,17 @@ function openInvoice(id) {
         .filter(x => x.sc > 0).sort((x, y) => (isOpen(y.p) - isOpen(x.p)) || (y.sc - x.sc)).map(x => x.p);
     }
     $("#inv-count").textContent = q ? `Znaleziono: ${list.length}` : "";
-    $("#inv-rows").innerHTML = list.length ? list.map(p => priceRow(p, { catEdit: mode === "cat" })).join("")
+    const rowsHtml = () => {
+      if (!grouped) return list.map(p => priceRow(p, { catEdit: mode === "cat" })).join("");
+      // grupy wg rodzaju; napoje, a na samym końcu alkohol (wyceniasz je na koniec)
+      const gk = p => { const d = Core.isDrink(p.invoiceName || p.name, p.category); return (p.category === "alkohol" || d === "alko") ? "~alk" : d === "napoj" ? "~nap" : p.category; };
+      const order = [...S.settings.categories.filter(c => c.id !== "alkohol").map(c => c.id), "~nap", "~alk"];
+      const label = k => k === "~nap" ? "🥤 Napoje" : k === "~alk" ? "🍺 Alkohol" : catName(k);
+      const buckets = new Map(order.map(k => [k, []]));
+      for (const p of list) { const k = gk(p); (buckets.get(k) || buckets.set(k, []).get(k)).push(p); }
+      return [...buckets].filter(([, v]) => v.length).map(([k, v]) => `<div class="grp">${esc(label(k))} <span>${v.length}</span></div>` + v.map(p => priceRow(p)).join("")).join("");
+    };
+    $("#inv-rows").innerHTML = list.length ? rowsHtml()
       : q ? `<div class="empty"><div class="empty-ic">🔎</div>Nic nie pasuje do „${esc(q)}”</div>` : `<div class="empty"><div class="empty-ic">🎉</div>Wszystkie pozycje mają decyzję</div>`;
     bindRows($("#inv-rows"), draw);
   };
@@ -1480,6 +1497,7 @@ function openInvoice(id) {
         <button data-mode="all" class="${mode === "all" ? "on" : ""}">Wszystkie</button>
         <button data-mode="cat" class="${mode === "cat" ? "on" : ""}">Kategorie</button>
       </div>
+      ${mode !== "cat" ? `<div class="seg seg-sm" id="inv-sort"><button data-sort="cat" class="${sortMode === "cat" ? "on" : ""}">Wg rodzaju (napoje na końcu)</button><button data-sort="urg" class="${sortMode === "urg" ? "on" : ""}">Wg ważności</button></div>` : ""}
       ${mode === "cat" ? `<div class="hint">Sprawdź kategorie po imporcie. Zmiana jest zapamiętywana – następnym razem podobne nazwy dostaną ją same.</div>` : ""}
       ${same.length && mode !== "cat" ? `<button class="btn wide" id="bulk-keep">✓ Zatwierdź bez zmian ceny (${same.length})</button>` : ""}
       <div class="small" id="inv-count"></div>
@@ -1490,6 +1508,10 @@ function openInvoice(id) {
     qi.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); qi.blur(); const first = $("#inv-rows [data-pid]"); if (first) first.click(); } };
     $("#inv-q-clear").onclick = () => { query = ""; qi.value = ""; $("#inv-q-clear").style.display = "none"; drawRows(); qi.focus(); };
     document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { mode = b.dataset.mode; draw(); });
+    document.querySelectorAll("#inv-sort [data-sort]").forEach(b => b.onclick = () => {
+      sortMode = b.dataset.sort; try { localStorage.setItem("cenownik-invsort", sortMode); } catch (_) {}
+      document.querySelectorAll("#inv-sort [data-sort]").forEach(x => x.classList.toggle("on", x === b)); drawRows();
+    });
     const bk = $("#bulk-keep");
     if (bk) bk.onclick = async () => { for (const p of same) await decide(p, p.shelfPrice, "keep"); draw(); renderAll(); toast("Zatwierdzono " + same.length); };
     $("#inv-csv").onclick = () => exportInvoiceCsv(inv);
@@ -1532,6 +1554,7 @@ function renderProducts() {
   if (q) { scores = new Map(); list = list.filter(p => { const sc = Core.searchScore(q, p.name + " " + (p.invoiceName || ""), (p.eans || []).join(" ") + " " + (p.indeks || "")); if (sc > 0) scores.set(p.id, sc); return sc > 0; }); }
   if (filter === "open") list = list.filter(needsDecision);
   if (filter === "noean") list = list.filter(p => !(p.eans || []).length);
+  if (filter === "drinks") list = list.filter(p => Core.isDrink(p.invoiceName || p.name, p.category));
   if (filter.startsWith("cat:")) list = list.filter(p => p.category === filter.slice(4));
   list.sort((a, b) => scores ? (scores.get(b.id) - scores.get(a.id)) || Core.plcmp(a.name, b.name) : Core.plcmp(a.name, b.name));
   $("#prod-count").textContent = `${list.length} produktów` + (localStorage.getItem("cenownik-swiped") ? "" : " · przesuń w prawo = ustaw sugerowaną cenę");
@@ -1543,7 +1566,7 @@ function renderProducts() {
 
 function fillCatFilter() {
   const sel = $("#prod-filter"), v = sel.value;
-  sel.innerHTML = `<option value="all">Wszystkie</option><option value="open">Do decyzji</option><option value="noean">Bez EAN</option>` +
+  sel.innerHTML = `<option value="all">Wszystkie</option><option value="open">Do decyzji</option><option value="noean">Bez EAN</option><option value="drinks">Napoje i alkohol</option>` +
     S.settings.categories.map(c => `<option value="cat:${c.id}">${esc(c.name)}</option>`).join("");
   sel.value = [...sel.options].some(o => o.value === v) ? v : "all";
 }
@@ -1669,7 +1692,7 @@ async function decideWithUndo(p, price, action, msg) {
 function snack(msg, actionLabel, onAction) {
   const el = $("#snack");
   el.innerHTML = `<span>${esc(msg)}</span><button>${esc(actionLabel)}</button>`;
-  el.classList.add("show");
+  el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
   clearTimeout(snack._t); snack._t = setTimeout(() => el.classList.remove("show"), 6000);
   el.querySelector("button").onclick = () => { el.classList.remove("show"); clearTimeout(snack._t); onAction(); };
 }
@@ -1730,6 +1753,38 @@ function closeModal() {
   if (cb) requestAnimationFrame(() => setTimeout(cb, 0));
 }
 function alertBox(msg) { modal(`<pre class="msg">${esc(msg)}</pre><div class="btns"><button class="btn primary" onclick="closeModal()">OK</button></div>`, null); }
+
+
+// ===================== Zsuwanie okna gestem w dół (uchwyt u góry) =====================
+(function sheetDrag() {
+  const top = document.querySelector(".sheet-top"), sheet = document.querySelector(".sheet");
+  if (!top || !sheet) return;
+  let id = null, sy = 0, dy = 0, t0 = 0;
+  top.addEventListener("pointerdown", e => {
+    if (e.target.closest("#modal-close")) return;
+    id = e.pointerId; sy = e.clientY; dy = 0; t0 = Date.now();
+    sheet.style.animation = "none"; sheet.style.transition = "none"; try { top.setPointerCapture(id); } catch (_) {}
+  });
+  top.addEventListener("pointermove", e => {
+    if (e.pointerId !== id) return;
+    dy = Math.max(0, e.clientY - sy);
+    sheet.style.transform = `translateY(${dy}px)`;
+    $("#modal").style.background = `rgba(5,8,12,${0.5 * Math.max(0, 1 - dy / 500)})`;
+  });
+  const end = e => {
+    if (e.pointerId !== id) return; id = null;
+    const fast = dy / Math.max(1, Date.now() - t0) > 0.6;
+    sheet.style.transition = "transform .22s ease-out";
+    if (dy > 110 || (fast && dy > 40)) {
+      sheet.style.transform = "translateY(100%)";
+      setTimeout(() => { closeModal(); sheet.style.cssText = ""; $("#modal").style.background = ""; }, 200);
+    } else {
+      sheet.style.transform = "translateY(0)"; $("#modal").style.background = "";
+      setTimeout(() => { sheet.style.cssText = ""; }, 230);
+    }
+  };
+  top.addEventListener("pointerup", end); top.addEventListener("pointercancel", end);
+})();
 
 // ===================== Skaner =====================
 const Scanner = (() => {
