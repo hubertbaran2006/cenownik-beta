@@ -623,6 +623,14 @@ const Core = (() => {
   }
 
   // koszt brutto jednej sztuki na półce
+  // Czteropak (lub inny „N-PAK”) piwa/napoju w puszce: faktura liczy cenę za opakowanie, półka za sztukę
+  function detectPack(name) {
+    const m = /(?:^|[\s(])([2-9]|1[0-2])\s*-?\s*PAK(?=$|[\s),.])/i.exec(String(name || ""));
+    if (!m) return 1;
+    const n = String(name).toLowerCase();
+    return /pusz|piwo|cydr|radler|puszk/.test(n) || isDrink(name, "") === "alko" ? Number(m[1]) : 1;
+  }
+
   // Rabat Eurocash: cena zakupu = cena z faktury pomniejszona o stały procent (jak w aplikacji Eurocash)
   let RABAT = { on: false, pct: 0 };
   function setRabat(on, pct) { RABAT = { on: !!on, pct: Number(pct) || 0 }; }
@@ -1010,11 +1018,11 @@ const Core = (() => {
 
   const PLC = new Intl.Collator("pl");
   const plcmp = (a, b) => PLC.compare(a || "", b || "");
-  return { plcmp, isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, setRabat, costGross, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
+  return { detectPack, plcmp, isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, setRabat, costGross, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
 })();
 
 
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.0.1";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -1196,7 +1204,7 @@ async function applyInvoice(inv, fileName) {
     if (!p) for (const q of changed.values()) if ((gtin && q.eans.includes(gtin)) || (it.indeks && q.indeks === it.indeks)) { p = q; break; }
     if (!p) {
       p = { id: uid(), name: it.name, indeks: it.indeks || "", eans: [], category: Core.guessCategory(it.name, it.vat, S.settings, S.learn),
-        packQty: 1, marginOverride: null, shelfPrice: null, costHistory: [], priceHistory: [], created: today() };
+        packQty: Core.detectPack(it.name), marginOverride: null, shelfPrice: null, costHistory: [], priceHistory: [], created: today() };
     }
     if (gtin && !p.eans.includes(gtin)) p.eans.push(gtin);
     if (!p.indeks && it.indeks) p.indeks = it.indeks;
@@ -1945,6 +1953,19 @@ async function backupImport(file) {
 
 // jednorazowo: przelicz kategorie zgadnięte automatycznie (lepsze rozpoznawanie od wersji 5),
 // poprawki użytkownika zostają (są w mapie nauki i oznaczone catManual)
+async function migratePacks() {
+  const kv = await DB.all("kv");
+  if ((kv.find(x => x.k === "packVer") || {}).v >= 1) return;
+  const changed = [];
+  for (const p of S.products.values()) {
+    if ((Number(p.packQty) || 1) !== 1) continue;
+    const n = Core.detectPack(p.invoiceName || p.name);
+    if (n > 1) { p.packQty = n; changed.push(p); }
+  }
+  if (changed.length) await DB.putMany("products", changed);
+  await DB.put("kv", { k: "packVer", v: 1 });
+  if (changed.length) setTimeout(() => toast(`Czteropaki: cena liczona za sztukę (${changed.length} prod.)`, 4000), 800);
+}
 async function migrateCategories() {
   const kv = await DB.all("kv");
   const ver = (kv.find(x => x.k === "catVer") || {}).v || 1;
@@ -1983,6 +2004,7 @@ async function init() {
   await DB.open();
   await loadAll();
   await migrateCategories();
+  await migratePacks();
   await migrateSettings();
   Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++;
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
