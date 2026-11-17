@@ -1,43 +1,34 @@
-# Cenownik – instrukcja
+# Cenownik 1.0.0 – instrukcja
 
-## 1. Wrzucenie aplikacji do internetu (za darmo, raz)
-Aparat w Safari działa tylko na stronie https, dlatego pliki trzeba gdzieś opublikować. Najprościej przez GitHub Pages:
+## Co robi
+Czyta faktury z hurtowni (PDF, plik .455, XML z KSeF, CSV), zapamiętuje ceny zakupu i podpowiada cenę na półkę: koszt brutto + narzut kategorii, zaokrąglony po sklepowemu. Pokazuje zmiany od ostatniej dostawy, a podwyżki (szczególnie napojów i alkoholu) oznacza wyraźnie.
 
-1. Załóż darmowe konto na github.com.
-2. Kliknij **New repository**, nazwij je `cenownik`, ustaw **Public**, utwórz.
-3. Kliknij **uploading an existing file** i przeciągnij WSZYSTKIE pliki z tego folderu (index.html, sw.js, manifest.json, icon-*.png, pdf.min.mjs, pdf.worker.min.mjs, pdf-worker.mjs, rs-polyfill.mjs, LICENSE-pdfjs.txt). Zatwierdź przyciskiem **Commit changes**.
-4. Wejdź w **Settings → Pages**, w „Branch” wybierz `main` i `/ (root)`, kliknij **Save**.
-5. Po 1–2 minutach aplikacja będzie pod adresem `https://TWÓJ-LOGIN.github.io/cenownik/`.
-
-Twoje dane (produkty, ceny, faktury) NIE trafiają na GitHub – są zapisane tylko w telefonie.
-
-Inne darmowe opcje: Netlify Drop (app.netlify.com/drop – przeciągasz folder) albo Cloudflare Pages.
+## 1. Publikacja (raz, za darmo)
+Aparat w Safari działa tylko na stronie https, więc pliki lądują na GitHub Pages: repozytorium **Public**, pliki z tego folderu w głównym katalogu, **Settings → Pages → Branch `main` / `(root)`**. Dane (produkty, ceny, faktury) NIE trafiają na GitHub, są tylko w telefonie.
+Pliki: index.html, sw.js, manifest.json, icon-180/192/512.png, pdf.min.mjs, pdf.worker.min.mjs, pdf-worker.mjs, rs-polyfill.mjs, LICENSE-pdfjs.txt.
 
 ## 2. Instalacja na iPhonie
-1. Otwórz ten adres w **Safari**.
-2. Udostępnij → **Do ekranu początkowego**.
-3. Uruchamiaj aplikację zawsze z ikony na ekranie (wtedy iOS nie kasuje danych).
-4. Przy pierwszym skanowaniu zezwól na dostęp do aparatu.
+Otwórz adres w **Safari** → Udostępnij → **Do ekranu początkowego**. Uruchamiaj zawsze z ikony. Przed usunięciem skrótu zrób kopię (Ustawienia → Zapisz kopię), bo dane są przypisane do aplikacji.
 
 ## 3. Praca z dostawą
-1. Otwórz fakturę PDF w aplikacji hurtowni albo w mailu → Udostępnij → **Zachowaj w Plikach**.
-   (Działa też XML z KSeF i CSV.)
-2. Zakładka **Dostawy** → Wybierz pliki → zaznacz PDF (może być kilka naraz).
-3. Otwórz dostawę → zakładka **Kategorie** → popraw kategorie tam, gdzie aplikacja źle zgadła. Zapamięta to dla podobnych nazw.
-4. Zakładka **Skanuj** → Włącz aparat → skanujesz produkt → widzisz koszt, zmianę od ostatniej dostawy i proponowaną cenę →
-   **Zmień na …** albo **Zostaw …** albo wpisz własną.
-5. W **Dostawy** przy fakturze widać, ile pozycji czeka jeszcze na decyzję.
+1. Zapisz fakturę w Plikach (PDF z Eurocash, plik **.455**, XML z KSeF lub CSV).
+2. **Dostawy → Wybierz pliki.**
+3. Otwórz dostawę. Na górze możesz **Pokazać** wybrany rodzaj (np. Napoje, Alkohol) i **Sortować** (Ważność / Nazwa A–Z / Rodzaj).
+4. **Przesuń produkt w prawo**, żeby ustawić cenę podpowiedzianą przez aplikację (u dołu pojawi się „Cofnij"). Dotknięcie otwiera kartę produktu, gdzie można wpisać własną cenę.
+5. Zakładka **Skanuj**: aparat lub wpisanie kodu pokazuje koszt, zmianę i proponowaną cenę.
+6. Karta „do oznaczenia" na ekranie Skanuj to lista metek i cenówek do wymiany; odhaczasz je ✓.
+Okno produktu lub dostawy zamkniesz ✕, dotknięciem tła albo zsunięciem uchwytu u góry w dół.
+
+## Ustawienia, które warto znać
+- **Rabat Eurocash** (domyślnie 2%): cena zakupu liczona jak w aplikacji Eurocash, czyli netto minus rabat obcięte do groszy, potem VAT.
+- **Nie zmieniaj ceny, gdy różnica < 10 gr.**
+- **Kategorie i narzuty**, cenówka na półce zamiast metek (np. alkohol), kolory.
+- **Zaokrąglanie** do 10 gr, w górę od 3 gr reszty.
+- **Wygląd:** motyw auto/jasny/ciemny, kolor, rozmiar.
 
 ## Ważne
-- **PDF musi być „tekstowy”** (wygenerowany przez system hurtowni). Zdjęcie/skan faktury nie zadziała.
-- **Wygląd:** Ustawienia → Wygląd: motyw auto/jasny/ciemny, kolor i rozmiar.
-- **Zgrzewki / kartony:** jeśli na fakturze jest „op” (np. 6 szt.), wpisz na karcie produktu „Szt. w opakowaniu” = 6. Zapamięta się.
-- **Brak EAN na fakturze:** przy pierwszym skanie wybierz produkt z listy – kod zostanie powiązany na stałe.
-- **Kategorie:** zgadywane po nazwie (piwo, wódka → alkohol; ziemniaki, jabłka → warzywa). Popraw jednym kliknięciem, zapamięta się.
-- **Zaokrąglanie:** domyślnie do 10 gr; reszta od 3 gr w górę → w górę (3,52 → 3,50; 3,53 → 3,60). Zmienisz w Ustawieniach.
-- **Kopia zapasowa:** Ustawienia → Zapisz kopię (rób np. raz w tygodniu).
-- **Korekty faktur** są pomijane przy imporcie.
-- Aktualizacja aplikacji = podmiana plików na GitHubie (wrzuć nowe, zastąp stare); dane w telefonie zostają. Po aktualizacji zamknij i otwórz aplikację 2 razy.
-
-## Plik .455 (od hurtowni)
-W zakładce Dostawy wybierz plik z końcówką .455 tak samo jak PDF. Wczytuje się najszybciej i bez błędów odczytu, bo to gotowe dane, a nie tabela do rozpoznawania. Kaucje (DRS) są pomijane.
+- PDF musi być tekstowy (z systemu hurtowni). Zdjęcie lub skan nie zadziała.
+- Plik .455 jest najdokładniejszy, ale nie ma bonów. Rabat bierze się wtedy z ustawienia powyżej.
+- Zgrzewki: na karcie produktu wpisz „Szt. w opakowaniu".
+- Korekty faktur są pomijane przy imporcie.
+- **Aktualizacja** = podmiana plików na GitHubie. Po niej zamknij aplikację całkiem i otwórz ją ponownie. Numer wersji jest na dole Ustawień.

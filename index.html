@@ -62,7 +62,7 @@ label{display:block;font-size:13px;color:var(--mut);font-weight:600}label input,
 .row{position:relative;display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:var(--pad) var(--pad) var(--pad) calc(var(--pad) + 4px);margin:7px 0;cursor:pointer;box-shadow:var(--shadow);overflow:hidden}
 .row{touch-action:pan-y}
 .grp{display:flex;justify-content:space-between;align-items:center;margin:16px 4px 2px;font-size:12.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}.grp span{background:var(--card2);border:1px solid var(--line);border-radius:99px;padding:1px 9px;font-size:12px}
-.seg-sm{margin:4px 0 8px}.seg-sm button{font-size:12.5px}
+.filters{display:flex;gap:8px;margin:4px 0 6px}.filters label{flex:1;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--mut);margin:0}.filters select{flex:1;min-width:0;padding:8px 6px;font-size:13.5px;margin:0}
 .swipe-wrap{position:relative;overflow:hidden;border-radius:14px}
 .swipe-bg{position:absolute;inset:0;display:flex;align-items:center;gap:10px;padding-left:18px;color:#fff;font-weight:800;font-size:15px;border-radius:14px;background:color-mix(in srgb,var(--ok) calc(var(--p,0)*85%),var(--card2))}
 .swipe-bg .sw-ic{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.28);display:grid;place-items:center;font-size:17px;opacity:var(--p,0);transform:scale(calc(.5 + var(--p,0)*.5))}
@@ -1014,7 +1014,7 @@ const Core = (() => {
 })();
 
 
-const APP_VERSION = "15";
+const APP_VERSION = "1.0.0";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -1450,14 +1450,20 @@ function renderInvoices() {
 function openInvoice(id) {
   const inv = S.invoices.find(i => i.id === id);
   if (!inv) return;
-  let mode = "open", query = "", sortMode = localStorage.getItem("cenownik-invsort") || "cat";
+  let mode = "open", query = "", catF = "", sortMode = localStorage.getItem("cenownik-invsort") || "urg";
   const products = () => [...new Map(inv.lines.map(l => [l.productId, S.products.get(l.productId)])).values()].filter(Boolean);
   const isOpen = p => needsDecision(p) && p.lastCost.invoiceId === inv.id;
   const drawRows = () => {
     const ps = products();
     let list = mode === "open" ? ps.filter(isOpen) : mode === "up" ? ps.filter(p => isOpen(p) && statusOf(p).cls === "up") : ps;
     if (mode !== "cat") list = list.map(p => ({ p, u: urgency(p) })).sort((a, b) => a.u - b.u || Core.plcmp(a.p.name, b.p.name)).map(x => x.p);
+    if (mode !== "cat") {
+      if (catF === "~nap") list = list.filter(p => Core.isDrink(p.invoiceName || p.name, p.category) === "napoj");
+      else if (catF) list = list.filter(p => p.category === catF);
+    }
     const grouped = sortMode === "cat" && mode !== "cat" && !query.trim();
+    if (mode !== "cat" && !query.trim() && sortMode === "name") list = list.slice().sort((a, b) => Core.plcmp(a.name, b.name));
+    if (grouped) { const ci = id => { const k = S.settings.categories.findIndex(c => c.id === id); return k < 0 ? 99 : k; }; list = list.slice().sort((a, b) => ci(a.category) - ci(b.category)); }
     const q = query.trim();
     if (q) {
       // szukamy w całej fakturze; pozycje do decyzji wyżej
@@ -1467,13 +1473,9 @@ function openInvoice(id) {
     $("#inv-count").textContent = q ? `Znaleziono: ${list.length}` : "";
     const rowsHtml = () => {
       if (!grouped) return list.map(p => priceRow(p, { catEdit: mode === "cat" })).join("");
-      // grupy wg rodzaju; napoje, a na samym końcu alkohol (wyceniasz je na koniec)
-      const gk = p => { const d = Core.isDrink(p.invoiceName || p.name, p.category); return (p.category === "alkohol" || d === "alko") ? "~alk" : d === "napoj" ? "~nap" : p.category; };
-      const order = [...S.settings.categories.filter(c => c.id !== "alkohol").map(c => c.id), "~nap", "~alk"];
-      const label = k => k === "~nap" ? "🥤 Napoje" : k === "~alk" ? "🍺 Alkohol" : catName(k);
-      const buckets = new Map(order.map(k => [k, []]));
-      for (const p of list) { const k = gk(p); (buckets.get(k) || buckets.set(k, []).get(k)).push(p); }
-      return [...buckets].filter(([, v]) => v.length).map(([k, v]) => `<div class="grp">${esc(label(k))} <span>${v.length}</span></div>` + v.map(p => priceRow(p)).join("")).join("");
+      const buckets = new Map();
+      for (const p of list) { if (!buckets.has(p.category)) buckets.set(p.category, []); buckets.get(p.category).push(p); }
+      return [...buckets].map(([k, v]) => `<div class="grp">${esc(catName(k))} <span>${v.length}</span></div>` + v.map(p => priceRow(p)).join("")).join("");
     };
     $("#inv-rows").innerHTML = list.length ? rowsHtml()
       : q ? `<div class="empty"><div class="empty-ic">🔎</div>Nic nie pasuje do „${esc(q)}”</div>` : `<div class="empty"><div class="empty-ic">🎉</div>Wszystkie pozycje mają decyzję</div>`;
@@ -1488,7 +1490,7 @@ function openInvoice(id) {
     modal(`<h2>${esc(inv.number)}</h2><div class="row-sub">${esc(inv.date)} · ${esc(inv.seller || "")} · ${pr.done}/${pr.total} gotowe</div>
       <div class="bar"><i style="width:${pr.total ? Math.round(pr.done / pr.total * 100) : 100}%"></i></div>
       <div class="search sticky-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="inv-q" type="search" placeholder="Szukaj w fakturze, np. „zubr”, „jogurt 150”" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" value="${esc(query)}">
+        <input id="inv-q" type="search" placeholder="Szukaj w fakturze…" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="search" value="${esc(query)}">
         <button class="clear" id="inv-q-clear" aria-label="Wyczyść" style="${query ? "" : "display:none"}">✕</button></div>
       ${ups.length ? `<button class="alert-up" data-mode="up">▲ ${ups.length} ${plural(ups.length, "podwyżka", "podwyżki", "podwyżek")}${upDrinks ? ` · w tym napoje/alkohol: ${upDrinks}` : ""} – pokaż</button>` : ""}
       <div class="seg">
@@ -1497,7 +1499,7 @@ function openInvoice(id) {
         <button data-mode="all" class="${mode === "all" ? "on" : ""}">Wszystkie</button>
         <button data-mode="cat" class="${mode === "cat" ? "on" : ""}">Kategorie</button>
       </div>
-      ${mode !== "cat" ? `<div class="seg seg-sm" id="inv-sort"><button data-sort="cat" class="${sortMode === "cat" ? "on" : ""}">Wg rodzaju (napoje na końcu)</button><button data-sort="urg" class="${sortMode === "urg" ? "on" : ""}">Wg ważności</button></div>` : ""}
+      ${mode !== "cat" ? `<div class="filters"><label>Pokaż<select id="inv-catf"><option value="">Wszystko</option>${S.settings.categories.map(c => `<option value="${c.id}" ${catF === c.id ? "selected" : ""}>${esc(c.name)}</option>`).join("")}<option value="~nap" ${catF === "~nap" ? "selected" : ""}>Napoje</option></select></label><label>Sortuj<select id="inv-sort"><option value="urg" ${sortMode === "urg" ? "selected" : ""}>Ważność</option><option value="name" ${sortMode === "name" ? "selected" : ""}>Nazwa A–Z</option><option value="cat" ${sortMode === "cat" ? "selected" : ""}>Rodzaj</option></select></label></div>` : ""}
       ${mode === "cat" ? `<div class="hint">Sprawdź kategorie po imporcie. Zmiana jest zapamiętywana – następnym razem podobne nazwy dostaną ją same.</div>` : ""}
       ${same.length && mode !== "cat" ? `<button class="btn wide" id="bulk-keep">✓ Zatwierdź bez zmian ceny (${same.length})</button>` : ""}
       <div class="small" id="inv-count"></div>
@@ -1508,10 +1510,9 @@ function openInvoice(id) {
     qi.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); qi.blur(); const first = $("#inv-rows [data-pid]"); if (first) first.click(); } };
     $("#inv-q-clear").onclick = () => { query = ""; qi.value = ""; $("#inv-q-clear").style.display = "none"; drawRows(); qi.focus(); };
     document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { mode = b.dataset.mode; draw(); });
-    document.querySelectorAll("#inv-sort [data-sort]").forEach(b => b.onclick = () => {
-      sortMode = b.dataset.sort; try { localStorage.setItem("cenownik-invsort", sortMode); } catch (_) {}
-      document.querySelectorAll("#inv-sort [data-sort]").forEach(x => x.classList.toggle("on", x === b)); drawRows();
-    });
+    const cf = $("#inv-catf"), so = $("#inv-sort");
+    if (cf) cf.onchange = () => { catF = cf.value; drawRows(); };
+    if (so) so.onchange = () => { sortMode = so.value; try { localStorage.setItem("cenownik-invsort", sortMode); } catch (_) {} drawRows(); };
     const bk = $("#bulk-keep");
     if (bk) bk.onclick = async () => { for (const p of same) await decide(p, p.shelfPrice, "keep"); draw(); renderAll(); toast("Zatwierdzono " + same.length); };
     $("#inv-csv").onclick = () => exportInvoiceCsv(inv);
@@ -1937,7 +1938,7 @@ async function backupImport(file) {
     await DB.clear("products"); await DB.clear("invoices");
     await DB.putMany("products", data.products); await DB.putMany("invoices", data.invoices);
     await DB.put("kv", { k: "learn", v: data.learn || {} });
-    S.settings = Object.assign({}, Core.DEFAULT_SETTINGS, data.settings); await saveSettings(); Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++; applyTheme(); fillCatFilter();
+    S.settings = Object.assign({}, JSON.parse(JSON.stringify(Core.DEFAULT_SETTINGS)), data.settings); await migrateSettings(); applyTheme(); fillCatFilter();
     await loadAll(); renderAll(); renderSettings(); toast("Przywrócono kopię");
   } catch (e) { alertBox("Błąd przywracania: " + e.message); }
 }
@@ -1970,13 +1971,19 @@ async function loadAll() {
 }
 
 // ===================== Start =====================
+async function migrateSettings() {
+  const s = S.settings;
+  if (!s.settingsVer) { if (!Number(s.changeTolerance)) s.changeTolerance = 0.10; s.settingsVer = 2; }
+  if (s.settingsVer < 3) { const a = s.categories.find(c => c.id === "alkohol"); if (a && a.shelfTag === undefined) a.shelfTag = true; s.settingsVer = 3; }
+  if (s.settingsVer < 4) { s.rabatOn = true; s.rabatPct = 2; s.settingsVer = 4; }
+  await saveSettings();
+  Core.setRabat(s.rabatOn, s.rabatPct); SETV++;
+}
 async function init() {
   await DB.open();
   await loadAll();
   await migrateCategories();
-  if (!S.settings.settingsVer) { if (!Number(S.settings.changeTolerance)) S.settings.changeTolerance = 0.10; S.settings.settingsVer = 2; await saveSettings(); }
-  if (S.settings.settingsVer < 3) { const a = S.settings.categories.find(c => c.id === "alkohol"); if (a && a.shelfTag === undefined) a.shelfTag = true; S.settings.settingsVer = 3; await saveSettings(); }
-  if (S.settings.settingsVer < 4) { S.settings.rabatOn = true; S.settings.rabatPct = 2; S.settings.settingsVer = 4; await saveSettings(); }
+  await migrateSettings();
   Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++;
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 
