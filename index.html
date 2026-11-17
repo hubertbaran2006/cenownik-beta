@@ -178,7 +178,7 @@ details label{margin-top:10px}
     <div class="drop">
       <div class="card-title">Wczytaj fakturę</div>
       <div class="small">PDF z aplikacji hurtowni, XML z KSeF albo CSV. Możesz zaznaczyć kilka plików naraz.</div>
-      <span class="btn primary filebtn">📄 Wybierz pliki<input type="file" id="file-input" multiple accept=".pdf,.xml,.csv,.txt,application/pdf,text/xml,application/xml,text/csv"></span>
+      <span class="btn primary filebtn">📄 Wybierz pliki<input type="file" id="file-input" multiple></span>
     </div>
     <h3>Dostawy</h3>
     <div id="invoice-list"></div>
@@ -660,6 +660,33 @@ const Core = (() => {
     return { number, date, seller, sellerNip, kind, items, format: "KSeF" };
   }
 
+
+  // ---------- Plik .455 (eksport hurtowni: linie rozdzielane tabulatorem FH/FO/FS/FP/FF/FV) ----------
+  function looksLike455(text) { return /^\s*FH\t/.test(text.slice(0, 200)); }
+  function parseEurocash455(text) {
+    const items = [];
+    let number = "", date = "", seller = "", sellerNip = "", sumGross = NaN;
+    for (const raw of text.split(/\r?\n/)) {
+      if (!raw.trim()) continue;
+      const f = raw.split("\t").map(s => s.trim());
+      if (f[0] === "FH") { date = f[2] || f[1] || ""; number = f[3] || ""; }
+      else if (f[0] === "FS") { sellerNip = (f[1] || "").replace(/\D/g, ""); seller = f[2] || ""; }
+      else if (f[0] === "FF") sumGross = parseFloat(String(f[3]).replace(",", "."));
+      else if (f[0] === "FP") {
+        const num = s => parseFloat(String(s).replace(",", "."));
+        const qty = num(f[4]), net = num(f[5]), vat = num(f[6]);
+        if (!isFinite(net) || !isFinite(qty)) continue;
+        const v = vat > 0 ? vat : 0;
+        items.push({
+          name: f[2] || "", indeks: f[1] || "", gtin: (f[9] || "").replace(/\D/g, ""),
+          unit: f[3] || "", qty, vat: v, net, gross: net * (1 + v / 100)
+        });
+      }
+    }
+    if (!items.length) throw new Error("plik .455 bez pozycji (FP)");
+    return { number, date, seller, sellerNip, kind: "VAT", items, format: "455", sumGross };
+  }
+
   // ---------- CSV (awaryjnie, gdy hurtownia daje eksport) ----------
   function parseCsv(text) {
     const first = text.split(/\r?\n/)[0] || "";
@@ -935,11 +962,11 @@ const Core = (() => {
 
   function fmt(x) { return x === null || x === undefined || !isFinite(x) ? "—" : x.toFixed(2).replace(".", ","); }
 
-  return { isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, parseKsefXml, parseCsv, fmt };
+  return { isDrink, norm, searchScore, DEFAULT_SETTINGS, groupLines, lineWords, parseRowWords, parseInvoiceText, learnCategory, guessCategory, parseNum, roundPrice, marginFor, unitCost, suggestedPrice, parseKsefXml, parseCsv, parseEurocash455, looksLike455, fmt };
 })();
 
 
-const APP_VERSION = "7";
+const APP_VERSION = "8";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -1084,9 +1111,11 @@ async function importFiles(files) {
         inv = Core.parseInvoiceText(lines);
         if (!inv.items.length) throw new Error("nie znalazłem tabeli z pozycjami (L.P, Nazwa, Ilość…)");
       } else {
-        const text = new TextDecoder("utf-8").decode(buf);
+        let text;
+        try { text = new TextDecoder("utf-8", { fatal: true }).decode(buf); }
+        catch (_) { text = new TextDecoder("windows-1250").decode(buf); }
         const isXml = /^\s*(\ufeff)?<\?xml|<Faktura[\s>]/.test(text.slice(0, 2000)) || /\.xml$/i.test(f.name);
-        inv = isXml ? Core.parseKsefXml(text) : Core.parseCsv(text);
+        inv = Core.looksLike455(text) ? Core.parseEurocash455(text) : isXml ? Core.parseKsefXml(text) : Core.parseCsv(text);
       }
       if (inv.items.some(i => i.mismatch)) warnings.push(`${inv.number || f.name}: ${inv.items.filter(i => i.mismatch).length} poz. – ilość × cena nie zgadza się z wartością, sprawdź je`);
       if (/^KOR/i.test(inv.kind)) { skipped.push(f.name + " (korekta – pominięta)"); continue; }

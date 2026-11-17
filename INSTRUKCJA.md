@@ -38,3 +38,6 @@ Inne darmowe opcje: Netlify Drop (app.netlify.com/drop – przeciągasz folder) 
 - **Kopia zapasowa:** Ustawienia → Zapisz kopię (rób np. raz w tygodniu).
 - **Korekty faktur** są pomijane przy imporcie.
 - Aktualizacja aplikacji = podmiana plików na GitHubie (wrzuć nowe, zastąp stare); dane w telefonie zostają. Po aktualizacji zamknij i otwórz aplikację 2 razy.
+
+## Plik .455 (od hurtowni)
+W zakładce Dostawy wybierz plik z końcówką .455 tak samo jak PDF. Wczytuje się najszybciej i bez błędów odczytu, bo to gotowe dane, a nie tabela do rozpoznawania. Kaucje (DRS) są pomijane.
