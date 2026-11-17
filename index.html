@@ -609,7 +609,13 @@ const Core = (() => {
   // Rabat Eurocash: cena zakupu = cena z faktury pomniejszona o stały procent (jak w aplikacji Eurocash)
   let RABAT = { on: false, pct: 0 };
   function setRabat(on, pct) { RABAT = { on: !!on, pct: Number(pct) || 0 }; }
-  function costGross(c) { return RABAT.on && RABAT.pct > 0 ? c.gross * (1 - RABAT.pct / 100) : c.gross; }
+  // Eurocash: najpierw cena netto po rabacie (obcięta do groszy w dół), potem VAT i zaokrąglenie do groszy
+  function costGross(c) {
+    if (!(RABAT.on && RABAT.pct > 0)) return c.gross;
+    if (!(c.net > 0) || !isFinite(c.vat)) return c.gross * (1 - RABAT.pct / 100);
+    const net = Math.floor(c.net * (1 - RABAT.pct / 100) * 100 + 1e-6) / 100;
+    return Math.round(net * (1 + c.vat / 100) * 100 + 1e-6) / 100;
+  }
   function unitCost(product) {
     if (!product || !product.lastCost) return null;
     const pack = Number(product.packQty) || 1;
@@ -991,7 +997,7 @@ const Core = (() => {
 })();
 
 
-const APP_VERSION = "11";
+const APP_VERSION = "12";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -1767,7 +1773,7 @@ function renderSettings() {
   $("#set-bon").checked = !!s.rabatOn;
   $("#set-rabat").value = F(Number(s.rabatPct) || 0);
   $("#rabat-row").classList.toggle("off", !s.rabatOn);
-  $("#rabat-ex").textContent = s.rabatOn ? `Przykład: faktura ${F(3.97)} zł → zakup ${F(3.97 * (1 - (Number(s.rabatPct) || 0) / 100))} zł` : "Wyłączony: zakup = cena z faktury, bez rabatu.";
+  $("#rabat-ex").textContent = s.rabatOn ? `Przykład: netto 16,65 zł + 23% VAT → zakup ${F(Core.costGross({ net: 16.65, vat: 23, gross: 16.65 * 1.23 }))} zł` : "Wyłączony: zakup = cena z faktury, bez rabatu.";
   updateExample();
 }
 function updateExample() {
