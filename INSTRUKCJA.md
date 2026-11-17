@@ -37,3 +37,7 @@ Okno produktu lub dostawy zamkniesz ✕, dotknięciem tła albo zsunięciem uchw
 - **Piwo i drinki (34%)** – piwo, cydry i gotowe drinki (np. whisky z colą) mają własną kategorię z marżą 34%; wysokoprocentowy alkohol zostaje przy 25%.
 - **Nowe kolory** – podwyżki czerwone, obniżki zielone, nowe produkty niebieskie; lepszy kontrast w trybie jasnym i ciemnym.
 - **Szybszy skaner** – kod można trzymać poziomo, pionowo i do góry nogami. Skaner sprawdza całą klatkę i zatrzymuje się po pierwszym pewnym odczycie.
+
+## Nowości w 1.4.0
+- **Tryb łatwy** (Ustawienia, pierwszy przełącznik) – większe litery i przyciski, ukryte zaawansowane opcje (kategorie, liczenie ceny, filtry, historia), wyłączone przesuwanie palcem, dłużej widoczny przycisk „Cofnij”. Cenę ustawia się dotykając produktu i wielkiego zielonego przycisku.
+- **Style wyglądu** – Domyślny, Papier, Ocean, Las, Grafit (czarny OLED w trybie ciemnym) i Kontrast (dla słabszego wzroku). Działają w trybie jasnym i ciemnym, osobno wybierasz kolor akcentu.

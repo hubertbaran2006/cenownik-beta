@@ -13,7 +13,7 @@
 <link rel="icon" href="icon-192.png">
 <title>Cenownik</title>
 <script>
-try{const t=JSON.parse(localStorage.getItem("cenownik-theme")||"{}");const r=document.documentElement;r.dataset.theme=t.theme||"auto";r.dataset.density=t.density||"normal";if(t.accent){r.style.setProperty("--pri-l",t.accent[0]);r.style.setProperty("--pri-d",t.accent[1]);}}catch(e){}
+try{const t=JSON.parse(localStorage.getItem("cenownik-theme")||"{}");const r=document.documentElement;r.dataset.theme=t.theme||"auto";r.dataset.density=t.density||"normal";r.dataset.pal=t.pal||"domyslny";if(t.easy)r.dataset.easy="1";r.dataset.dark=(t.theme==="dark"||(t.theme!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches))?"1":"0";if(t.accent){r.style.setProperty("--pri-l",t.accent[0]);r.style.setProperty("--pri-d",t.accent[1]);}}catch(e){}
 </script>
 <style>
 :root{--pri-l:#0b6b63;--pri-d:#2dd4bf;
@@ -28,6 +28,45 @@ try{const t=JSON.parse(localStorage.getItem("cenownik-theme")||"{}");const r=doc
 :root[data-theme=dark]{--tagk:42%;--tagbg:26%;--bg:#090c11;--card:#131820;--card2:#1a212b;--ink:#f1f4f8;--mut:#a3adbd;--line:#2a3340;--shadow:none;--pri:var(--pri-d);--pri-ink:#04201c;
  --up:#ff6d62;--up-bg:#401714;--down:#3fd68c;--down-bg:#0e3022;--new:#fbbf24;--new-bg:#3b2a06;--ok:#3fd68c;--ok-bg:#0e3022;--same:#cdd5e0;--same-bg:#262e3a;
  --info:#8bbcff;--info-bg:#10294f;--alko:#ffa3bd;--alko-bg:#47112a}
+/* motywy (powierzchnie): działają też na kafelkach podglądu */
+[data-pal=domyslny]:not([data-dark="1"]){--bg:#f2f4f7;--card:#fff;--card2:#f6f8fa;--ink:#0f172a;--mut:#4f5b6d;--line:#dde2ea}
+[data-pal=domyslny][data-dark="1"]{--bg:#090c11;--card:#131820;--card2:#1a212b;--ink:#f1f4f8;--mut:#a3adbd;--line:#2a3340}
+[data-pal=papier]:not([data-dark="1"]){--bg:#f5efe2;--card:#fffcf5;--card2:#f9f3e6;--ink:#2b2218;--mut:#625644;--line:#e4d9c3}
+[data-pal=papier][data-dark="1"]{--bg:#16120d;--card:#211b14;--card2:#2a231a;--ink:#f6efe3;--mut:#b8ab95;--line:#3a3124}
+[data-pal=ocean]:not([data-dark="1"]){--bg:#e8f1f8;--card:#fff;--card2:#f0f6fb;--ink:#0b1f35;--mut:#455b73;--line:#cfe0ee}
+[data-pal=ocean][data-dark="1"]{--bg:#06121e;--card:#0d1f30;--card2:#132a40;--ink:#eaf3fb;--mut:#9eb5ca;--line:#1d3a56}
+[data-pal=las]:not([data-dark="1"]){--bg:#ebf2e8;--card:#fbfffa;--card2:#f1f7ee;--ink:#14281a;--mut:#4a5f4e;--line:#d1e0cd}
+[data-pal=las][data-dark="1"]{--bg:#09120b;--card:#111d14;--card2:#18271c;--ink:#edf6ee;--mut:#a2b8a6;--line:#223727}
+[data-pal=grafit]:not([data-dark="1"]){--bg:#e9ebee;--card:#fafbfc;--card2:#f0f1f4;--ink:#16181d;--mut:#555c68;--line:#cfd3da}
+[data-pal=grafit][data-dark="1"]{--bg:#000;--card:#0e0e10;--card2:#18181b;--ink:#f4f4f5;--mut:#a1a1aa;--line:#2a2a2f}
+[data-pal=kontrast]:not([data-dark="1"]){--bg:#fff;--card:#fff;--card2:#f1f1f1;--ink:#000;--mut:#1f2937;--line:#5b6472}
+[data-pal=kontrast][data-dark="1"]{--bg:#000;--card:#000;--card2:#141414;--ink:#fff;--mut:#e5e7eb;--line:#9ca3af}
+:root[data-pal=kontrast]{--shadow:none}
+:root[data-pal=kontrast] .card,:root[data-pal=kontrast] .row,:root[data-pal=kontrast] .btn{border-width:2px}
+.pal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 4px}
+.pal-tile{border:2px solid var(--line);border-radius:14px;padding:7px 7px 8px;background:var(--bg);color:var(--ink);text-align:center;font-size:13px;font-weight:700}
+.pal-tile.on{border-color:var(--pri);box-shadow:0 0 0 2px var(--pri)}
+.pal-tile .pv{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:7px;margin-bottom:6px;text-align:left}
+.pal-tile .pv i{display:block;height:5px;border-radius:3px;background:var(--ink);opacity:.8;width:70%;margin-bottom:5px}
+.pal-tile .pv i+i{background:var(--mut);opacity:.5;width:45%}
+.pal-tile .pv b{display:block;height:9px;border-radius:5px;background:var(--pri);width:55%;margin-top:6px}
+.easy-box{display:flex;align-items:center;gap:14px}.easy-box>div{flex:1}.easy-box b{font-size:1.1em}
+/* tryb łatwy */
+:root[data-easy="1"]{--fs:20px;--pad:18px;--snack:11s}
+:root[data-easy="1"] .adv,:root[data-easy="1"] .filters,:root[data-easy="1"] [data-mode=cat],:root[data-easy="1"] #recent-adv{display:none!important}
+:root[data-easy="1"] .btn{font-size:19px;padding:17px 18px;min-height:56px;border-radius:15px}
+:root[data-easy="1"] input,:root[data-easy="1"] select{font-size:19px;min-height:54px}
+:root[data-easy="1"] nav button{font-size:15px;padding:12px 0 9px}
+:root[data-easy="1"] nav svg{width:30px;height:30px}
+:root[data-easy="1"] .row-title{font-size:1.12em}
+:root[data-easy="1"] .row .price{font-size:1.5em}
+:root[data-easy="1"] .chip{font-size:15px;padding:6px 11px}
+:root[data-easy="1"] .seg button{font-size:16px;padding:13px 4px}
+:root[data-easy="1"] .tick{flex-basis:56px;height:56px}
+:root[data-easy="1"] .big-btns .btn{padding:22px 10px;font-size:22px}
+:root[data-easy="1"] .suggest .big{font-size:3em}
+:root[data-easy="1"] #snack button{font-size:19px;padding:15px 24px}
+:root[data-easy="1"] #snack{font-size:18px}
 :root[data-density=compact]{--pad:10px;--fs:15px}
 :root[data-density=large]{--pad:17px;--fs:18px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -173,7 +212,7 @@ pre.msg{white-space:pre-wrap;font:inherit;margin:8px 0}
 #snack button{border:0;background:#14b8a6;color:#052e2a;font-weight:850;font-size:15px;letter-spacing:.02em;padding:11px 20px;border-radius:11px;text-transform:uppercase;box-shadow:0 1px 0 rgba(255,255,255,.35) inset}
 #snack button:active{transform:scale(.96)}
 #snack::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;background:#14b8a6;transform-origin:left;opacity:0}
-#snack.show::after{opacity:.9;animation:snacktime 6s linear forwards}
+#snack.show::after{opacity:.9;animation:snacktime var(--snack,6s) linear forwards}
 @keyframes snacktime{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 .p-title{font-size:21px;line-height:1.25;margin:4px 40px 6px 0;letter-spacing:-.3px}
 .suggest .up-head{display:inline-block;background:var(--up);color:#fff;font-weight:800;font-size:13px;border-radius:99px;padding:4px 11px;margin-bottom:4px}
@@ -220,21 +259,27 @@ details label{margin-top:10px}
 
   <section class="tab" id="tab-settings">
     <div class="card">
+      <div class="easy-box"><div><b>Tryb łatwy</b><div class="small">Duże litery i przyciski, tylko najpotrzebniejsze opcje, bez przesuwania palcem. Wygodniejszy w obsłudze.</div></div>
+        <label class="switch"><input type="checkbox" id="set-easy"><span class="sl"></span></label></div>
+    </div>
+    <div class="card">
       <div class="card-title">Wygląd</div>
       <label style="margin-top:8px">Motyw</label>
       <div class="seg" id="set-theme"><button data-v="auto">Auto</button><button data-v="light">☀︎ Jasny</button><button data-v="dark">☾ Ciemny</button></div>
-      <label>Kolor</label>
+      <label>Styl</label>
+      <div class="pal-grid" id="set-pal"></div>
+      <label>Kolor akcentu</label>
       <div class="swatches" id="set-accent"></div>
       <label>Rozmiar</label>
       <div class="seg" id="set-density"><button data-v="compact">Kompakt</button><button data-v="normal">Normalny</button><button data-v="large">Duży</button></div>
     </div>
-    <div class="card">
+    <div class="card adv">
       <div class="card-title">Kategorie i narzuty</div>
       <div class="small">★ = domyślna dla nowych produktów. Faktura nie ma kategorii, więc aplikacja zgaduje po nazwie i uczy się z Twoich poprawek.</div>
       <div id="set-cats"></div>
       <button class="btn small" id="add-cat">+ Dodaj kategorię</button>
     </div>
-    <div class="card">
+    <div class="card adv">
       <div class="card-title">Liczenie ceny</div>
       <label style="margin-top:8px">Sposób<select id="set-mode"><option value="narzut">Narzut: cena zakupu brutto + X%</option><option value="marza">Marża: X% ceny sprzedaży</option></select></label>
       <div class="grid2">
@@ -258,7 +303,7 @@ details label{margin-top:10px}
         <button class="btn" id="bk-export">💾 Zapisz kopię</button>
         <span class="btn filebtn">📂 Przywróć<input type="file" id="bk-import" accept=".json,application/json"></span>
       </div>
-      <div class="btns"><button class="btn" id="demo">Przykładowa faktura</button><button class="btn danger" id="wipe">Wyczyść dane</button></div>
+      <div class="btns adv"><button class="btn" id="demo">Przykładowa faktura</button><button class="btn danger" id="wipe">Wyczyść dane</button></div>
       <div class="small"><b id="app-ver"></b> · Odczyt PDF: pdf.js (Mozilla, licencja Apache 2.0).</div>
     </div>
   </section>
@@ -1056,7 +1101,7 @@ const Core = (() => {
 })();
 
 
-const APP_VERSION = "1.3.0";
+const APP_VERSION = "1.4.0";
 // ===================== Baza danych (IndexedDB) =====================
 const DB = (() => {
   let db;
@@ -1387,6 +1432,7 @@ function bindRows(container, onClose) {
 
 // ===================== Gest: przesuń produkt w prawo = ustaw proponowaną cenę =====================
 function bindSwipe(container, onDone) {
+  if (S.settings && S.settings.easy) return;
   container.querySelectorAll(".row[data-pid]").forEach(row => {
     if (row.querySelector("select")) return;
     let id = null, sx = 0, sy = 0, lock = false, wrap = null, bg = null, w = 0, tx = 0, p = null, sp = null, same = false, armed = false;
@@ -1492,7 +1538,7 @@ function renderInvoices() {
 function openInvoice(id) {
   const inv = S.invoices.find(i => i.id === id);
   if (!inv) return;
-  let mode = "open", query = "", catF = "", sortMode = localStorage.getItem("cenownik-invsort") || "urg";
+  let mode = "open", query = "", catF = "", sortMode = (S.settings && S.settings.easy) ? "urg" : (localStorage.getItem("cenownik-invsort") || "urg");
   const products = () => [...new Map(inv.lines.map(l => [l.productId, S.products.get(l.productId)])).values()].filter(Boolean);
   const isOpen = p => needsDecision(p) && p.lastCost.invoiceId === inv.id;
   const drawRows = () => {
@@ -1600,7 +1646,7 @@ function renderProducts() {
   if (filter === "drinks") list = list.filter(p => Core.isDrink(p.invoiceName || p.name, p.category));
   if (filter.startsWith("cat:")) list = list.filter(p => p.category === filter.slice(4));
   list.sort((a, b) => scores ? (scores.get(b.id) - scores.get(a.id)) || Core.plcmp(a.name, b.name) : Core.plcmp(a.name, b.name));
-  $("#prod-count").textContent = `${list.length} produktów` + (localStorage.getItem("cenownik-swiped") ? "" : " · przesuń w prawo = ustaw sugerowaną cenę");
+  $("#prod-count").textContent = `${list.length} produktów` + ((localStorage.getItem("cenownik-swiped") || (S.settings && S.settings.easy)) ? "" : " · przesuń w prawo = ustaw sugerowaną cenę");
   const box = $("#prod-list");
   box.innerHTML = list.slice(0, 300).map(p => priceRow(p)).join("") + (list.length > 300 ? `<div class="empty">Pokazano 300 z ${list.length} – zawęź wyszukiwanie.</div>` : "")
     || `<div class="empty"><div class="empty-ic">🔎</div>Nic nie znaleziono</div>`;
@@ -1615,6 +1661,7 @@ function fillCatFilter() {
 }
 
 // ===================== Motyw =====================
+const PALS = [["domyslny", "Domyślny"], ["papier", "Papier"], ["ocean", "Ocean"], ["las", "Las"], ["grafit", "Grafit"], ["kontrast", "Kontrast"]];
 const ACCENTS = { morski: ["#0f766e", "#14b8a6"], niebieski: ["#1d4ed8", "#60a5fa"], fiolet: ["#6d28d9", "#a78bfa"], pomarancz: ["#c2410c", "#fb923c"], zielen: ["#15803d", "#4ade80"], rozowy: ["#be185d", "#f472b6"], grafit: ["#334155", "#cbd5e1"] };
 function applyTheme() {
   const s = S.settings;
@@ -1623,8 +1670,11 @@ function applyTheme() {
   const acc = ACCENTS[s.accent] || ACCENTS.morski;
   root.style.setProperty("--pri-l", acc[0]); root.style.setProperty("--pri-d", acc[1]);
   root.dataset.density = s.density || "normal";
-  try { localStorage.setItem("cenownik-theme", JSON.stringify({ theme: s.theme, accent: acc, density: s.density })); } catch (e) {}
+  root.dataset.pal = PALS.some(x => x[0] === s.pal) ? s.pal : "domyslny";
+  if (s.easy) root.dataset.easy = "1"; else delete root.dataset.easy;
   const dark = s.theme === "dark" || (s.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+  root.dataset.dark = dark ? "1" : "0";
+  try { localStorage.setItem("cenownik-theme", JSON.stringify({ theme: s.theme, accent: acc, density: s.density, pal: root.dataset.pal, easy: !!s.easy })); } catch (e) {}
   document.querySelector('meta[name="theme-color"]').content = dark ? "#0b0e13" : "#f3f4f7";
 }
 
@@ -1664,7 +1714,7 @@ function openProduct(p, onClose) {
         <button class="btn primary" id="p-apply">${same ? "✓ Zatwierdź " + F(sp.price) : "✓ Ustaw " + F(sp.price) + " zł"}</button>
         ${shelf != null && !same ? `<button class="btn" id="p-keep">Zostaw ${F(shelf)}</button>` : ""}
       </div>` : ""}
-      <div class="inline"><input id="p-custom" inputmode="decimal" placeholder="${shelf == null ? "Obecna cena na półce, np. 3,49" : "Inna cena, np. 3,49"}"><button class="btn" id="p-setcustom">Ustaw</button></div>
+      <div class="inline"><input id="p-custom" inputmode="decimal" placeholder="${s.easy ? "Inna cena" : shelf == null ? "Obecna cena na półce, np. 3,49" : "Inna cena, np. 3,49"}"><button class="btn" id="p-setcustom">Ustaw</button></div>
 
       ${p.lastCost ? `<div class="box">
         <div class="kv"><span>Zakup ${esc(p.lastCost.date)}</span><b>${F(uc)} zł brutto/szt</b></div>
@@ -1677,7 +1727,7 @@ function openProduct(p, onClose) {
       <div class="lbl">Kategoria</div>
       <div class="cats">${cats}</div>
 
-      <details><summary>Więcej</summary>
+      <details class="adv"><summary>Więcej</summary>
         <label>Nazwa<input id="p-name" value="${esc(p.name)}"></label>
         ${p.invoiceName && p.invoiceName !== p.name ? `<div class="row-sub">Na fakturze: ${esc(p.invoiceName)}</div>` : ""}
         <div class="grid2">
@@ -1686,7 +1736,7 @@ function openProduct(p, onClose) {
         </div>
         <button class="btn danger small" id="p-del">Usuń produkt</button>
       </details>
-      <details><summary>Historia cen</summary>
+      <details class="adv"><summary>Historia cen</summary>
         <h4>Zakup</h4>
         ${(p.costHistory || []).slice().reverse().map(c => `<div class="kv small"><span>${esc(c.date)} · ${esc(c.invoiceNo || "")}</span><span>${F(Core.costGross(c) / pack)} zł</span></div>`).join("") || "<div class='small'>—</div>"}
         <h4>Na półce</h4>
@@ -1736,7 +1786,7 @@ function snack(msg, actionLabel, onAction) {
   const el = $("#snack");
   el.innerHTML = `<span>${esc(msg)}</span><button>${esc(actionLabel)}</button>`;
   el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
-  clearTimeout(snack._t); snack._t = setTimeout(() => el.classList.remove("show"), 6000);
+  clearTimeout(snack._t); snack._t = setTimeout(() => el.classList.remove("show"), (S.settings && S.settings.easy) ? 11000 : 6000);
   el.querySelector("button").onclick = () => { el.classList.remove("show"); clearTimeout(snack._t); onAction(); };
 }
 
@@ -1951,6 +2001,10 @@ function renderSettings() {
   $("#set-density").querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === (s.density || "normal")));
   $("#set-accent").innerHTML = Object.entries(ACCENTS).map(([k, v]) => `<button class="sw ${k === (s.accent || "morski") ? "on" : ""}" data-acc="${k}" style="--c:${v[0]};--c2:${v[1]}" aria-label="${k}"></button>`).join("");
   $("#set-accent").querySelectorAll("[data-acc]").forEach(b => b.onclick = async () => { s.accent = b.dataset.acc; applyTheme(); await saveSettings(); renderSettings(); });
+  $("#set-easy").checked = !!s.easy;
+  const dk = document.documentElement.dataset.dark;
+  $("#set-pal").innerHTML = PALS.map(([k, n]) => `<button class="pal-tile ${k === (document.documentElement.dataset.pal) ? "on" : ""}" data-pal="${k}" data-dark="${dk}" data-pk="${k}"><div class="pv"><i></i><i></i><b></b></div>${n}</button>`).join("");
+  $("#set-pal").querySelectorAll("[data-pk]").forEach(b => b.onclick = async () => { s.pal = b.dataset.pk; applyTheme(); await saveSettings(); renderSettings(); });
   $("#set-mode").value = s.marginMode;
   $("#set-step").value = String(s.roundStep);
   $("#set-thr").value = F(s.roundThreshold);
@@ -2104,6 +2158,10 @@ async function init() {
   $("#set-mode").onchange = async e => { S.settings.marginMode = e.target.value; await saveSettings(); updateExample(); renderAll(); };
   $("#set-step").onchange = async e => { S.settings.roundStep = Number(e.target.value); await saveSettings(); updateExample(); renderAll(); };
   $("#set-thr").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v)) S.settings.roundThreshold = v; await saveSettings(); updateExample(); renderAll(); };
+  $("#set-easy").onchange = async e => {
+    S.settings.easy = e.target.checked; applyTheme(); await saveSettings(); renderAll(); renderSettings();
+    toast(S.settings.easy ? "Tryb łatwy włączony. Wyłączysz go w Ustawieniach." : "Tryb łatwy wyłączony", 4000);
+  };
   $("#set-bon").onchange = async e => { S.settings.rabatOn = e.target.checked; Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++; await saveSettings(); renderAll(); renderSettings(); };
   $("#set-rabat").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v) && v >= 0 && v < 50) S.settings.rabatPct = v; Core.setRabat(S.settings.rabatOn, S.settings.rabatPct); SETV++; await saveSettings(); renderAll(); renderSettings(); };
   $("#set-tol").onchange = async e => { const v = Core.parseNum(e.target.value); if (isFinite(v) && v >= 0) S.settings.changeTolerance = v; await saveSettings(); renderAll(); };
